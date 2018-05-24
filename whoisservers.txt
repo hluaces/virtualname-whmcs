@@ -1,0 +1,9 @@
+####WHOIS DOMINIOS VIRTUALNAME####
+.es|http://whois.virtualname.es/whois.php?domain=|HTTPREQUEST-DOMINIO DISPONIBLE
+.com.es|http://whois.virtualname.es/whois.php?domain=|HTTPREQUEST-DOMINIO DISPONIBLE
+.nom.es|http://whois.virtualname.es/whois.php?domain=|HTTPREQUEST-DOMINIO DISPONIBLE
+.org.es|http://whois.virtualname.es/whois.php?domain=|HTTPREQUEST-DOMINIO DISPONIBLE
+.gob.es|http://whois.virtualname.es/whois.php?domain=|HTTPREQUEST-DOMINIO DISPONIBLE
+.edu.es|http://whois.virtualname.es/whois.php?domain=|HTTPREQUEST-DOMINIO DISPONIBLE
+.cat|http://whois.virtualname.es/whois.php?domain=|HTTPREQUEST-DOMINIO DISPONIBLE
+####WHOIS DOMINIOS VIRTUALNAME####
