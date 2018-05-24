@@ -3,7 +3,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.5.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.14
+// * @version 1.1.15
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -195,6 +195,14 @@
         {/if}
 
         </fieldset>
+
+        {if $showMarketingEmailOptIn}
+            <div class="marketing-email-optin">
+                <h4>{lang key='emailMarketing.joinOurMailingList'}</h4>
+                <p>{$marketingEmailOptInMessage}</p>
+                <input type="checkbox" name="marketingoptin" value="1"{if $marketingEmailOptIn} checked{/if} class="no-icheck toggle-switch-success" data-size="small" data-on-text="{lang key='yes'}" data-off-text="{lang key='no'}">
+            </div>
+        {/if}
 
         <div class="form-actions">
             <input type="hidden" name="customerid" id="customerid" value="{$clientsdetails.userid}" />
@@ -826,10 +834,10 @@
 
         </fieldset>
 
-          <div class="form-actions">
+        <div class="form-actions">
             <input class="btn btn-primary" type="submit" name="submit" value="{$LANG.clientareasavechanges}" />
             <input class="btn" type="reset" value="{$LANG.cancel}" />
-          </div>
+        </div>
 
         </form>
 {/if}

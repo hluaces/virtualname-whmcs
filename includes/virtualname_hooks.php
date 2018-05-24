@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.5.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.14
+// * @version 1.1.15
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -98,6 +98,10 @@ function hook_contactsEdit($var){
 
 //LAUNCHED WHEN CONTACT WAS EDITED
 function hook_contactEdit($var){
+
+    //IF CANT HAVE ANY CONTACT OR USER IDS
+    if(!$var['userid'] && !$var['contactid'] && !$var['customerid'])
+        return 0;
 
     if($var['register'] == true)
         return 0;
@@ -208,6 +212,7 @@ function hook_contactEdit($var){
 
 //LAUNCHED WHEN CONTACT WAS ADDED
 function hook_contactAdd($var){
+
     $userID    = $var['userid'];
     $contactID = $var['contactid'];
 

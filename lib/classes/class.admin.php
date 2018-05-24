@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.5.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.14
+// * @version 1.1.15
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -13,7 +13,7 @@
 // *************************************************************************
 class Virtualname_admin{
 	#CLASS CONSTANTS#
-	public $module_version = '1.1.14';
+	public $module_version = '1.1.15';
 	public $vn_module_dir = 'modules/registrars/virtualname/';
 	public $vn_whmcs_dir;
 	public $vn_whmcs_version = '7';
