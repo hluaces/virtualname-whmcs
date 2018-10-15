@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.5.X
+// * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.15
+// * @version 1.1.16
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -448,8 +448,12 @@ else{
         $bill_id = $_POST['sel']['billing'];
         $tech_id = $_POST['sel']['tech'];
 
-        if($values['error'] == 'panelContactError')
-            $panel_contact_error = $_LANG['adminUpdatedContactsError'];
+        if($values['error']){
+            if($values['error'] == 'panelContactError')
+                $panel_contact_error = $_LANG['adminUpdatedContactsError'];
+            else
+                $panel_contact_error = $values['error'];
+        }
         else
             $contactPage .= '<div class=\'successbox\'><strong><span class=\'title\'>'.$_LANG['moduleactionsuccess'].'</span></strong><br>'.$_LANG['adminUpdatedContacts'].'</div>';
 

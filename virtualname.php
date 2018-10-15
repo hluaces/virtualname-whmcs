@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.5.X
+// * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.15
+// * @version 1.1.16
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -93,6 +93,7 @@ function virtualname_RenewDomain($params){
     $adminID    = $_SESSION['adminid'];
     $configLang = $vname_admin->get_config_lang($adminID);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -173,6 +174,7 @@ function virtualname_RegisterDomain($params){
     $adminID    = $_SESSION['adminid'];
     $configLang = $vname_admin->get_config_lang($adminID);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -417,6 +419,7 @@ function virtualname_SaveRegistrarLock($params){
     else
         $changeLock = TRUE;
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -456,6 +459,7 @@ function virtualname_TransferDomain($params){
     $adminID    = $_SESSION['adminid'];
     $configLang = $vname_admin->get_config_lang($adminID);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -573,6 +577,7 @@ function virtualname_IDProtectToggle($params){
     $vname_admin->check_configuration($params);
     $privacy = ($params['protectenable'] == '1') ? 'true' : 'false';
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -615,6 +620,7 @@ function virtualname_GetNameservers($params){
     $fields = array();
     $module = 'domains';
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -663,6 +669,7 @@ function virtualname_RegisterNameserver($params) {
     virtualname_init();
     $vname_admin->check_configuration($params);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -684,6 +691,7 @@ function virtualname_ModifyNameserver($params) {
     virtualname_init();
     $vname_admin->check_configuration($params);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -715,6 +723,7 @@ function virtualname_DeleteNameserver($params) {
     virtualname_init();
     $vname_admin->check_configuration($params);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -744,6 +753,7 @@ function virtualname_SaveNameservers($params){
     virtualname_init();
     $vname_admin->check_configuration($params);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -770,6 +780,7 @@ function virtualname_GetContactDetails($params){
     virtualname_init();
     $vname_admin->check_configuration($params);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -804,6 +815,7 @@ function virtualname_SaveContactDetails($params){
         $values = $vname_contacts->set_contacts_simple_details($params);
     }
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
     $Punycode = new Punycode();
@@ -825,6 +837,7 @@ function virtualname_SyncDomain($params){
     $adminID    = $_SESSION['adminid'];
     $configLang = $vname_admin->get_config_lang($adminID);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
 
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
@@ -939,6 +952,7 @@ function virtualname_Sync($params) {
     $adminID    = $_SESSION['adminid'];
     $configLang = $vname_admin->get_config_lang($adminID);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
 
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');
@@ -981,6 +995,7 @@ function virtualname_TransferSync($params) {
     $adminID    = $_SESSION['adminid'];
     $configLang = $vname_admin->get_config_lang($adminID);
     if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
 
     if(!class_exists('Punycode'))
         @include_once('lib/classes/class.punicode.php');

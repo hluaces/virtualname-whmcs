@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.5.X
+// * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.15
+// * @version 1.1.16
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -35,6 +35,7 @@ class Virtualname_domains extends Virtualname_api{
 	    $action = 'available.json';
 	    $RESTful= 'POST';
 	    if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+        if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
 	    if(!class_exists('Punycode'))
 	        @include_once('class.punicode.php');
 	    $Punycode = new Punycode();
@@ -56,6 +57,7 @@ class Virtualname_domains extends Virtualname_api{
 	    $action = 'available.json';
 	    $RESTful= 'POST';
 	    if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+        if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
 	    if(!class_exists('Punycode'))
 	        @include_once('class.punicode.php');
 	    $Punycode = new Punycode();
@@ -106,6 +108,7 @@ class Virtualname_domains extends Virtualname_api{
 	    $fields = array();
 	    $module = 'domains';
 	    if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+        if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
 	    if(!class_exists('Punycode'))
 	        @include_once('class.punicode.php');
 	    $Punycode = new Punycode();
@@ -295,6 +298,7 @@ class Virtualname_domains extends Virtualname_api{
         }
         $this->check_configuration($params);
         if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+        if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
         if(!class_exists('Punycode'))
             @include_once('class.punicode.php');
         $Punycode = new Punycode();
@@ -328,6 +332,8 @@ class Virtualname_domains extends Virtualname_api{
                 $values['error'] = $request['status']['description'];
                 if(isset($request['response']['name']))
                     $values['error'] .= ': '.implode(',', $request['response']['name']);
+                if(isset($request['response']['base']))
+                    $values['error'] .= ': '.implode(',', $request['response']['base']);
             }
             //logactivity('['.$domain.'] - ['.$request['status']['code']);
         }
@@ -405,6 +411,7 @@ class Virtualname_domains extends Virtualname_api{
 	public function transfer_sync($params) {
 	    $this->check_configuration($params);
 	    if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+        if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
 	    if(!class_exists('Punycode'))
 	        @include_once('class.punicode.php');
 	    $Punycode = new Punycode();
@@ -487,6 +494,7 @@ class Virtualname_domains extends Virtualname_api{
 	public function sync($params) {
 	    $this->check_configuration($params);
 	    if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+        if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
 	    if(!class_exists('Punycode')){
 	        if(!@include_once('class.punicode.php')){
 	            $Punycode   = new Punycode();
@@ -520,6 +528,7 @@ class Virtualname_domains extends Virtualname_api{
 	    $adminID    = $_SESSION['adminid'];
 	    $configLang = $this->get_config_lang($adminID);
 	    if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+        if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
 	    if(!class_exists('Punycode'))
 	        @include_once('class.punicode.php');
 	    $Punycode = new Punycode();
@@ -625,6 +634,7 @@ class Virtualname_domains extends Virtualname_api{
 	public function sync_domain_contacts($params, $domain_info, $allWHMCSTcpanelType){
 	    $this->check_configuration($params);
 	    if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+        if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
 	    if(!class_exists('Punycode'))
 	        @include_once('class.punicode.php');
 	    $Punycode = new Punycode();

@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.5.X
+// * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.15
+// * @version 1.1.16
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -538,6 +538,7 @@ class Virtualname_contacts extends Virtualname_domains{
         virtualname_init();
         $vname_admin->check_configuration($params);
         if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+        if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
         if(!class_exists('Punycode'))
             @include_once('class.punicode.php');
         $Punycode = new Punycode();
@@ -1207,6 +1208,7 @@ class Virtualname_contacts extends Virtualname_domains{
         virtualname_init();
         $vname_admin->check_configuration($params);
         if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+        if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
         if(!class_exists('Punycode'))
             @include_once('class.punicode.php');
         $Punycode = new Punycode();
@@ -1445,16 +1447,30 @@ class Virtualname_contacts extends Virtualname_domains{
         $adminID    = $_SESSION['adminid'];
         $configLang = $vname_admin->get_config_lang($adminID);
         if(!isset($params['additionalfields'])){
-            $regContact     = $params['reg'];
-            $adminContact   = $params['admin'];
-            $billingContact = $params['bill'];
-            $techContact    = $params['tech'];
+            if($params['reg'])
+                $regContact     = $params['reg'];
+            else
+                $regContact     = $_POST['sel']['reg'];
+            if($params['admin'])
+                $adminContact   = $params['admin'];
+            else
+                $adminContact   = $_POST['sel']['admin'];
+            if($params['bill'])
+                $billingContact = $params['bill'];
+            else
+                $billingContact = $_POST['sel']['billing'];
+            if($params['tech'])
+                $techContact    = $params['tech'];
+            else
+                $techContact    = $_POST['sel']['tech'];
             $configs = $vname_admin->config();
             $params = array_merge($params, $configs);
             if(isset($params['domainid']))
                 $domainid = $params['domainid'];
             else
                 $domainid = 0;
+            if($domainid != 0)
+                $params['additionalfields'] = $vname_domains->get_whmcs_additional_domains($domainid);
             $domainInfo = $vname_domains->get_whmcs_domain($params['domain'], $domainid);
             $domain = explode('.',$params['domain']);
             $params['domainid'] = $domainInfo['id'];
@@ -1462,7 +1478,6 @@ class Virtualname_contacts extends Virtualname_domains{
             $tld = substr($params['domain'], strlen($sld)+1);
             $params['tld'] = strtolower($tld);
             $params['sld'] = strtolower($sld);
-
         }
         else{
             $regContact     = $_POST['sel']['reg'];
@@ -1560,12 +1575,12 @@ class Virtualname_contacts extends Virtualname_domains{
                 $this->link_domain_contacts($params, $TCpanelId, $techContact, 'techContact');
             }
         }
-
         $error = false;
         foreach ($tcpanel_contacts as $key => $value){
             if(is_null($value))
                 $error = true;
         }
+
         if($error == true){
             logModuleCall('virtualname', 'SetDomainContacts ERROR', array('contacts'=>$tcpanel_contacts), array('error' => $configLang['errorContactNotFound']), '', '');
             $params['error'] = 'panelContactError';
@@ -1573,8 +1588,15 @@ class Virtualname_contacts extends Virtualname_domains{
         }
 
         //IF AT LEST ONE OR MORE CONTACTS WAS CHANGED
-        if(count($tcpanel_contacts)>0)
-            $this->set_domain_contacts($params, $tcpanel_contacts, $contact_types);
+        if(count($tcpanel_contacts) > 0){
+            $response = $this->set_domain_contacts($params, $tcpanel_contacts, $contact_types);
+            if($response['error']){
+                $params['error'] = $response['error'];
+                #ROLLBACK ON ERRORS
+                foreach($contact_types as $contact_type)
+                    $this->link_domain_contacts($params, $TCpanelId, $params['additionalfields'][$contact_type], $contact_type);
+            }
+        }
         return $params;
     }
 
