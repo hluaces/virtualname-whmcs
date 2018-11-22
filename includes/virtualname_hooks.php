@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.16
+// * @version 1.1.17
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -390,7 +390,6 @@ function hook_domain_data($vars){
 
         $statusDropDown = '<option value=\'disabled\' '.$select_inactive.'>'.$langs['transfer_on_renewal_inactive'].'</option>';
         $statusDropDown .= '<option value=\'active\' '.$select_active.'>'.$langs['transfer_on_renewal_active'].'</option>';
-        $registrarAccepted = $vname_domains->get_accepted_transfer_registrars();
 
         $typeDropDown  = '<option value=\'1\' '.$select_authcode.'>Authcode</option>';
         $typeDropDown .= '<option value=\'2\' '.$select_email.'>Email</option>';
@@ -409,7 +408,7 @@ function hook_domain_data($vars){
         $transfer_on_renewal .= '<label class=\'fieldlabel-inline '.$class_email.'\' id=\'email_label\' style=\'font-weight: 100;\'>Email administrativo<input type=\'text\' name=\'mail_transfer_on_renewal\' id=\'mail_transfer_on_renewal\'class=\'form-control input-300\' placeholder=\'email\' value=\''.$email.'\' '.$disabled.'/></label>';
         //$transfer_on_renewal .= '&nbsp;&nbsp;<label class=\'fieldlabel-inline\' style=\'font-weight: 100;\'><input type=\'submit\' name=\'launch_transfer_on_renewal\' id=\'launch_transfer_on_renewal\'class=\'form-control input-300\' value=\''.$langs['launch_transfer'].'\' '.$disabled.' /></label>';
         $transfer_on_renewal .= '</br><label style="font-weight: 100;">*'.$langs['info_transfer_on_renewal'].'</label> ';
-        $transfer_on_renewal .= '</br><label style="font-weight: 100;">**'.$langs['registrar_transfer_on_renewal'].': <b>'.strtoupper(implode(',', $registrarAccepted)).'</b></label> ';
+        $transfer_on_renewal .= '</br><label style="font-weight: 100;">**'.$langs['second_info_transfer_on_renewal'].'</b></label> ';
         $transfer_on_renewal .= '<input type=\'hidden\' name=\'registrant_transfer_on_renewal\' id=\'registrant_transfer_on_renewal\' value=\''.$domain['registrar'].'\'/>';
         return array(
                 '<b>'.$langs['transfer_on_renewal'].':</b>' => $transfer_on_renewal

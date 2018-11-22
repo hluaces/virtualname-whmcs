@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.16
+// * @version 1.1.17
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -191,7 +191,7 @@
     $langs_vn['status_transfer_on_renewal'] = 'Status';
     $langs_vn['type_transfer_on_renewal'] = 'Transfer type';
     $langs_vn['info_transfer_on_renewal'] = 'Assigning email is valid for speeding up ESNIC domain transfers without AUTHCODE: .es, .com.es, .org.es, .edu.es';
-    $langs_vn['registrar_transfer_on_renewal'] = 'Valid registrars for domains transfer on renewal';
+    $langs_vn['second_info_transfer_on_renewal'] = 'Only domains without transfer blocking or the 60 day IRTP blocking can be transferred';
     $langs_vn['add_contact_error'] = 'Contact error: Can\'t register/transfer current domain.';
     $langs_vn['registrar'] = 'Registrar contact';
     $langs_vn['admin'] = 'Admin contact';

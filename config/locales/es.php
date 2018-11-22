@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.16
+// * @version 1.1.17
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -191,7 +191,7 @@
     $langs_vn['status_transfer_on_renewal'] = 'Estado';
     $langs_vn['type_transfer_on_renewal'] = 'Tipo de transferencia';
     $langs_vn['info_transfer_on_renewal'] = 'Asignar email es válido para agilizar las transferencias de dominios de ESNIC y sin AUTHCODE: .es, .com.es, .org.es, .edu.es';
-    $langs_vn['registrar_transfer_on_renewal'] = 'Registradores aceptados para las transferencias en renovación';
+    $langs_vn['second_info_transfer_on_renewal'] = 'Solo podrán ser transferidos dominios sin bloqueo de transferencia o el bloqueo de 60 días de IRTP';
     $langs_vn['add_contact_error'] = 'Error de contactos: No se puede registrar/transferir este dominio.';
     $langs_vn['registrar'] = 'Contacto registrador';
     $langs_vn['admin'] = 'Contacto administrativo';

@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.16
+// * @version 1.1.17
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -135,9 +135,9 @@ class Virtualname_domains extends Virtualname_api{
 		}catch (Exception $e){
 	        return ($e->getMessage());
 	    }
-	    if(!$request['response'][0]){
+  	    if($request['status']['code'] == 404 || (!$request['response'][0] && $request['status']['code'] == 200)){
 	    	//DOMAIN NOT FOUND
-	    	$request['status']['code'] = 400;
+	    	$request['status']['code'] = 404;
 	    	$request['status']['description'] = $configLang['resource_not_found'];
 	    }
 	    return $request;
@@ -1514,16 +1514,6 @@ class Virtualname_domains extends Virtualname_api{
 	    $data = mysql_fetch_array($result);
 	    return $data;
 	}
-	//GET WHMCS TRANSFERS ACCEPTED REGISTRARS
-	public function get_accepted_transfer_registrars($registrar = ''){
-		$accepted_registrars = array('opensrspro', 'opensrs', 'enom', 'resellerclub', 'rrpproxy', 'openprovider');
-		if(empty($registrar))
-			return $accepted_registrars;
-		if(in_array($registrar, $accepted_registrars))
-			return true;
-		else
-			return false;
-	}
 	public function transfer_on_renewal($vars, $transfer_domain, $admin){
 		global $vname_admin, $vname_domains, $vname_contacts;
 		virtualname_init();
@@ -1557,107 +1547,52 @@ class Virtualname_domains extends Virtualname_api{
             if(empty($authcode)){
             	return array('abortWithError' => $langs['empty_authcode']);
             }
-
             $lock = RegGetRegistrarLock($vars['params']);
             if($lock == 'locked')
                 RegSaveRegistrarLock($vars['params']);
-
-            //CURRENT POSIBLES REGISTRANT TRANSFERS
-            $accepted = $this->get_accepted_transfer_registrars($vars['params']['registrar']);
-            if($accepted == true){
-	            //CREATE CONTACT FOR TRANSFER
-	            $values = RegGetContactDetails($vars['params']);
-	            $same_contact_action = array('opensrs', 'opensrspro', 'enom', 'resellerclub');
-            	if(in_array($vars['params']['registrar'], $same_contact_action)){
-            		$registrant_field = 'Registrant';
-            		$email_field = 'Email';
-            	}
-            	elseif($vars['params']['registrar'] == 'rrpproxy'){
-            		$registrant_field = 'Owner';
-            		$email_field = 'Email';
-            	}
-            	elseif($vars['params']['registrar'] == 'openprovider'){
-            		$registrant_field = 'Owner';
-            		$email_field = 'Email Address';
-            	}
-	            else
-	            	return array('abortWithError' => $langs['error_not_mail_transfer_available']);
-
-            	if($values['error'])
-            		return array('abortWithError' => $values['error']);
-	            elseif(isset($values[$registrant_field])){
-	            	if(!empty($values[$registrant_field][$email_field]) AND !is_null($values[$registrant_field][$email_field])){
-		            	$vars['params']['contactdetails'] = $values;
-		            	$domains_contacts = $vname_contacts->create_contacts_from_domain($vars['params']);
-			           	if(!$domains_contacts['error']){
-					        if(isset($domains_contacts['registrant']))
-					            $vars['params']['additionalfields']['regContact']    = $domains_contacts['registrant'];
-					        if(isset($domains_contacts['administrative']))
-					            $vars['params']['additionalfields']['adminContact']  = $domains_contacts['administrative'];
-					        if(isset($domains_contacts['technical']))
-					            $vars['params']['additionalfields']['techContact']   = $domains_contacts['technical'];
-					        if(isset($domains_contacts['billing']))
-					            $vars['params']['additionalfields']['billingContact']= $domains_contacts['billing'];
-			           	}
-			           	else{
-			           		return array('abortWithError' => $domains_contacts['error']);
-			           	}
-			        }
-	            }
-            	else
-            		return array('abortWithError' => 'Admin email: '.$langs['resource_not_found']);
-	        }
-	        else
-	        	return array('abortWithError' => $langs['error_not_authcode_transfer_available']);
         }
         elseif(in_array($transfer_domain['type'], $email_transfer_status)){
    	        //MAIL
-            //CURRENT POSIBLES REGISTRANT TRANSFERS
-            $accepted = $this->get_accepted_transfer_registrars($vars['params']['registrar']);
-            if($accepted){
-				if(!function_exists('RegGetContactDetails'))
-					require_once(realpath(dirname(__FILE__).'/../../../../..').'/includes/registrarfunctions.php');
-                $values = RegGetContactDetails($vars['params']);
-            	$same_mail_action = array('opensrs', 'opensrspro', 'enom', 'resellerclub', 'rrpproxy');
-            	if(in_array($vars['params']['registrar'], $same_mail_action))
-            		$email_field = 'Email';
-            	elseif($vars['params']['registrar'] == 'openprovider')
-            		$email_field = 'Email Address';
-	            else
-	            	return array('abortWithError' => $langs['error_not_mail_transfer_available']);
-            	if($values['error'])
-            		return array('abortWithError' => $values['error']);
-            	elseif(isset($values['Admin'])){
-            		if(empty($values['Admin'][$email_field]) || is_null($values['Admin'][$email_field]))
-            			$response_mail['error'] = 'Admin email: '.$langs['resource_not_found'];
-            	}
-            	else
-            		$response_mail['error'] = 'Admin email: '.$langs['resource_not_found'];
-            	//CHANGE ADMIN EMAIL
-                if(!$response_mail['error']){
-                	if(empty($transfer_domain['admin_email']) || $transfer_domain['value'] != $values['Admin'][$email_field]){
-	                    $contacts_response = $vname_contacts->transfer_contact_registrar($values, $vars['params']['registrar'], $transfer_domain['value']);
-	                    $vars['params']['contactdetails'] = $contacts_response['contacts'];
-	                    $response_set_mail = RegSaveContactDetails($vars['params']);
-	                    if(!$response_set_mail['error'] AND $response_set_mail['success']){
-	                    	$this->set_email_transfer_on_renewal($domainid, $values['Admin'][$email_field]);
-	                        $lock = RegGetRegistrarLock($vars['params']);
-	                        if($lock == 'locked')
-	                            RegSaveRegistrarLock($vars['params']);
-	                    }
-	                    else{
-	                    	if($response_set_mail['error'])
-	                        	return array('abortWithError' => utf8_decode($response_set_mail['error']));
-	                       	else
-	                       		return array('abortWithError' => $langs['error_on_update_mail']);
-	                    }
-	                }
+			if(!function_exists('RegGetContactDetails'))
+				require_once(realpath(dirname(__FILE__).'/../../../../..').'/includes/registrarfunctions.php');
+            $values = RegGetContactDetails($vars['params']);
+        	$same_mail_action = array('opensrs', 'opensrspro', 'enom', 'resellerclub', 'rrpproxy');
+        	if(in_array($vars['params']['registrar'], $same_mail_action))
+        		$email_field = 'Email';
+        	elseif($vars['params']['registrar'] == 'openprovider')
+        		$email_field = 'Email Address';
+            else
+            	return array('abortWithError' => $langs['error_not_mail_transfer_available']);
+        	if($values['error'])
+        		return array('abortWithError' => $values['error']);
+        	elseif(isset($values['Admin'])){
+        		if(empty($values['Admin'][$email_field]) || is_null($values['Admin'][$email_field]))
+        			$response_mail['error'] = 'Admin email: '.$langs['resource_not_found'];
+        	}
+        	else
+        		$response_mail['error'] = 'Admin email: '.$langs['resource_not_found'];
+        	//CHANGE ADMIN EMAIL
+            if(!$response_mail['error']){
+            	if(empty($transfer_domain['admin_email']) || $transfer_domain['value'] != $values['Admin'][$email_field]){
+                    $contacts_response = $vname_contacts->transfer_contact_registrar($values, $vars['params']['registrar'], $transfer_domain['value']);
+                    $vars['params']['contactdetails'] = $contacts_response['contacts'];
+                    $response_set_mail = RegSaveContactDetails($vars['params']);
+                    if(!$response_set_mail['error'] AND $response_set_mail['success']){
+                    	$this->set_email_transfer_on_renewal($domainid, $values['Admin'][$email_field]);
+                        $lock = RegGetRegistrarLock($vars['params']);
+                        if($lock == 'locked')
+                            RegSaveRegistrarLock($vars['params']);
+                    }
+                    else{
+                    	if($response_set_mail['error'])
+                        	return array('abortWithError' => utf8_decode($response_set_mail['error']));
+                       	else
+                       		return array('abortWithError' => $langs['error_on_update_mail']);
+                    }
                 }
-                else
-                    return array('abortWithError' => $response_mail['error']);
             }
             else
-                return array('abortWithError' => $langs['error_not_mail_transfer_available']);
+                return array('abortWithError' => $response_mail['error']);
         }
         else
         	return array('abortWithError' => $langs['unknow_transfer_status']);

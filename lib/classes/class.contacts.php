@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.16
+// * @version 1.1.17
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -98,7 +98,7 @@ class Virtualname_contacts extends Virtualname_domains{
                                                 'contact' => array( 'name'      =>$contact['firstname'],
                                                                     'lastname'  =>$contact['lastname'],
                                                                     'company'   =>$contact['company'],
-                                                                    'ic'        =>$contact['idnumber'],
+                                                                    'ic'        =>trim($contact['idnumber']),
                                                                     'email'     =>$contact['email'],
                                                                     'country'   =>$contact['country'],
                                                                     'state'     =>$this->fix_state($contact['state']),
@@ -396,7 +396,7 @@ class Virtualname_contacts extends Virtualname_domains{
                                                 'contact' => array( 'name'      =>$contact_array['contact']['firstname'],
                                                                     'lastname'  =>$contact_array['contact']['lastname'],
                                                                     'company'   =>$contact_array['contact']['company'],
-                                                                    'ic'        =>$contact_array['contact']['ic'],
+                                                                    'ic'        =>trim($contact_array['contact']['ic']),
                                                                     'email'     =>$contact_array['contact']['email'],
                                                                     'country'   =>$contact_array['contact']['country'],
                                                                     'state'     =>$this->fix_state($contact_array['contact']['state']),

@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.16
+// * @version 1.1.17
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -846,7 +846,7 @@ function virtualname_SyncDomain($params){
     $domain_info = $vname_domains->view_domain_info($params);
     $synclog = '[$domain] Virtualname Sync Domain:';
     if($domain_info['status']['code']< 200 || $domain_info['status']['code'] > 299){
-        if($domain_info['status']['code'] == 400){
+        if($domain_info['status']['code'] == 404){
             //UPDATE BBDD
             $sql = 'UPDATE tbldomains SET status = \'Cancelled\'';
             $sql .= ' WHERE id=\''.$params['domainid'].'\'';
@@ -960,7 +960,7 @@ function virtualname_Sync($params) {
     $domain = $Punycode->decode(strtolower(trim($params['sld'].'.'.$params['tld'])));
     $domain_info = $vname_domains->view_domain_info($params);
     if($domain_info['status']['code']< 200 || $domain_info['status']['code'] > 299){
-        if($domain_info['status']['code'] == 400){
+        if($domain_info['status']['code'] == 404){
             //UPDATE BBDD
             if($params['domainid']){
                 $sql = 'UPDATE tbldomains SET status = \'Cancelled\'';
@@ -1017,6 +1017,5 @@ function virtualname_TransferSync($params) {
     }
     return $values;
 }
-
 
 ?>

@@ -3,7 +3,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.16
+// * @version 1.1.17
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -148,18 +148,6 @@
                             </div>
                         {/foreach}
                     {/if}
-
-                    {if $emailoptoutenabled}
-                    <div class="form-group">
-                        <label class="control-label" for="inputEmailOptOut">{$LANG.emailoptout}</label>
-                        <div class="controls checkbox">
-                            <label>
-                                <input type="checkbox" value="1" name="emailoptout" id="inputEmailOptOut" {if $emailoptout} checked{/if} /> {$LANG.emailoptoutdesc}
-                            </label>
-                        </div>
-                    </div>
-                    {/if}
-
                 </div>
             </div>
 

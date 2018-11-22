@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.6.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.16
+// * @version 1.1.17
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -163,8 +163,8 @@ else {
     $clientArea->assign('contacts', $client->getContacts());
     $clientArea->assign('billingcid', $whmcs->get_req_var_if($e, 'billingcid', $exdetails));
     $clientArea->assign('paymentmethods', showPaymentGatewaysList());
-    $clientArea->assign('emailoptout', $whmcs->get_req_var_if($e, 'emailoptout', $exdetails));
-    $clientArea->assign('emailoptoutenabled', $whmcs->get_config('AllowClientsEmailOptOut'));
+    //$clientArea->assign('emailoptout', $whmcs->get_req_var_if($e, 'emailoptout', $exdetails));
+    //$clientArea->assign('emailoptoutenabled', $whmcs->get_config('AllowClientsEmailOptOut'));
     $clientArea->assign('defaultpaymentmethod', $whmcs->get_req_var_if($e, 'defaultgateway', $exdetails));
     //GDPR EMAIL OPT IN OUT FOR WHMCS 7.5
     if($whmcs_show_marketing){
