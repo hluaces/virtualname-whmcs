@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.6.X
+// * WHMCS version 7.7.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.17
+// * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -1136,7 +1136,7 @@ class Virtualname_contacts extends Virtualname_domains{
                 $response = $this->del_tcpanel_contact($contactID, $tcpanel_contact, $type);
             else
                 $response = $this->edit_contact($tcpanel_contact, $contact, $contactID, $type);
-            if($response['error']){
+            if($response['error'] && $response['status']['code'] != 422){
                 $error = $response['error'];
                 return $error;
             }
@@ -1148,6 +1148,7 @@ class Virtualname_contacts extends Virtualname_domains{
                 return array('error'=>$error);
             }
         }
+        return array();
     }
     //GENERATE CONTACT FROM CLIENT
     public function client_to_contact($userid){

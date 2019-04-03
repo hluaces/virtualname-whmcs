@@ -1,9 +1,9 @@
 <!--// *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.6.X
+// * WHMCS version 7.7.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.17
+// * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -21,6 +21,16 @@
     {/if}
 
     <script type="text/javascript" src="{$BASE_PATH_JS}/StatesDropdown.js"></script>
+    <script type="text/javascript">
+        {literal}
+        jQuery(document).ready(function(){
+            $('#clientidentificationnumber').change(function() {
+                $('#tax_id').val($(this).val());
+                true
+            });
+        });
+        {/literal}
+    </script>
 
     <div class="col-md-12 pull-md-right" id="rightMenu">
 
@@ -130,6 +140,7 @@
                     <div class="form-group" {if $hideicnumber} style='display:none;' {/if}>
                         <label class="control-label" for="clientidentificationnumber">{$LANG.clientIdentificationNumber}</label>
                         <input class="form-control" type="text" name="clientidentificationnumber" id="clientidentificationnumber" value="{$clientidentificationnumber}" class="form-control"/>
+                        <input class="form-control" type="hidden" name="tax_id" id="tax_id" value="{$clientidentificationnumber}" />
                     </div>
 
                     <div class="form-group" {if $hideicnumber} style='display:none;' {/if}>
@@ -201,6 +212,10 @@
                     else {
                         jQuery("#subaccountfields").slideUp();
                     }
+                });
+                $('#identificationnumber').change(function() {
+                    $('#tax_id').val($(this).val());
+                    true
                 });
             });
             {/literal}
@@ -278,14 +293,14 @@
                             <input type="tel" name="phonenumber" id="inputPhone" value="{$contactphonenumber}" class="form-control" />
                         </div>
 
-                        <div class="control-group" {if $hideicnumber} style='display:none;' {/if}>
+                        <div class="form-group" {if $hideicnumber} style='display:none;' {/if}>
                             <label class="control-label" for="identificationnumber">{$LANG.clientIdentificationNumber}</label>
                             <input class="form-control" type="text" name="identificationnumber" id="identificationnumber" value="{$contactidentificationnumber}" />
+                            <input class="form-control" type="hidden" name="tax_id" id="tax_id" value="{$contactidentificationnumber}" />
                         </div>
 
                         <div class="form-group" {if $hideicnumber} style='display:none;' {/if}>
                             <label class="control-label" for="legal_form">{$LANG.legal_form_contact}</label>
-                            <br/>
                             {$legalforms}
                         </div>
 
@@ -327,7 +342,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label" for="country">{$LANG.clientareacountry}</label>
+                            <label class="control-label" for="country" style="width: 100%;">{$LANG.clientareacountry}</label>
                             {$countriesdropdown}
                         </div>
 
@@ -486,7 +501,15 @@
         {include file="$template/includes/alert.tpl" type="error" errorshtml=$errormessage}
     {/if}
     <script>
-    var stateNotRequired = true;
+        var stateNotRequired = true;
+        {literal}
+        jQuery(document).ready(function(){
+            $('#identificationnumber').change(function() {
+                $('#tax_id').val($(this).val());
+                true
+            });
+        });
+        {/literal}
     </script>
     <script type="text/javascript" src="{$BASE_PATH_JS}/StatesDropdown.js"></script>
 
@@ -536,9 +559,10 @@
                         <label for="inputPhone" class="control-label">{$LANG.clientareaphonenumber}</label>
                         <input type="tel" name="phonenumber" id="inputPhone" value="{$contactphonenumber}" class="form-control" />
                     </div>
-                    <div class="form-group" style='display:none;'>
+                    <div class="form-group" {if $hideicnumber} style='display:none;' {/if}>
                         <label class="control-label" for="identificationnumber">{$LANG.clientIdentificationNumber}</label>
-                        <input class="form-control" type="text" name="identificationnumber" id="identificationnumber" value="{$contactidentificationnumber}" />
+                        <input class="form-control" type="text" name="identificationnumber" id="identificationnumber" value="{$contactidentificationnumber}"/>
+                        <input class="form-control" type="hidden" name="tax_id" id="tax_id" value="{$contactidentificationnumber}" />
                     </div>
                     <div class="form-group" style='display:none;'>
                         <label class="control-label" for="legal_form">{$LANG.legal_form_contact}</label>

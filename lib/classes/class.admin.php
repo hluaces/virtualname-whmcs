@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.6.X
+// * WHMCS version 7.7.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.17
+// * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -13,7 +13,7 @@
 // *************************************************************************
 class Virtualname_admin{
 	#CLASS CONSTANTS#
-	public $module_version = '1.1.17';
+	public $module_version = '1.1.18';
 	public $vn_module_dir = 'modules/registrars/virtualname/';
 	public $vn_whmcs_dir;
 	public $vn_whmcs_version = '7';
@@ -238,7 +238,7 @@ class Virtualname_admin{
 	    );
 	    //GET ALL CONFIGS
 	    if(!isset($params) || !isset($configarray['APIKey'])){
-	        $configs = array('APIKey', 'devMode', 'defaultvatnumber', 'hideicnumber', 'disablelocktlds', 'outboundTransferMailing', 'defaultNameserversError', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient');
+	        $configs = array('APIKey', 'devMode', 'defaultvatnumber', 'hideicnumber', 'disablelocktlds', 'outboundTransferMailing', 'defaultNameserversError', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'taxid');
 	        $table = 'tblregistrars';
 	        $fields = 'value';
 	        foreach($configs as $setting){
@@ -393,6 +393,67 @@ class Virtualname_admin{
 				$error_field = str_replace($key.':', $configLang['error']['field'].' '.$value, $error_field);
 		}
 		return $error_field.'<br>'.$user;
+	}
+
+	//GET VERSION AND SUBVERSION
+	public function get_whmcs_versions(){
+	    $version = explode('.', $this->get_whmcs_version());
+	    $response['main_version'] = intval($version[0]);
+	    $response['sub_version'] = intval($version[1]);
+	    return $response;
+	}
+
+	//CHECK TAX ENABLED
+	public function check_tax_enabled(){
+	    $table = 'tblconfiguration';
+	    $fields = 'value';
+	    $where = array('setting'=>'TaxEnabled');
+	    $result = select_query($table,$fields,$where);
+	    $value = false;
+	    if(mysql_num_rows($result)>0){
+	        $data = mysql_fetch_array($result);
+	        if($data['value'] == 'on')
+	        	$value = true;
+	    }
+	    return $value;
+	}
+
+	//CHECK TAX ID NOT DISABLED
+	public function check_tax_id_enabled(){
+	    $table = 'tblconfiguration';
+	    $fields = 'value';
+	    $where = array('setting'=>'TaxIDDisabled');
+	    $result = select_query($table,$fields,$where);
+	    $value = true;
+	    if(mysql_num_rows($result)>0){
+	        $data = mysql_fetch_array($result);
+	        if($data['value'] == 1)
+	        	$value = false;
+	    }
+	    return $value;
+	}
+
+	//CHECK IF THIS WHMCS HAVE ENABLE TAX ID
+	public function check_enable_customer_tax_id(){
+		$version = $this->get_whmcs_versions();
+		$check = false;
+		if(($version['main_version'] == 7 && $version['sub_version'] >= 7) || $version['main_version'] > 7){
+			if($this->check_tax_enabled() && $this->check_tax_id_enabled())
+				$check = true;
+		}
+		return $check;
+	}
+
+	//CHECK IF CAN BE USE CUSTOMER TAX ID
+	public function can_be_use_customer_tax_id(){
+		$config = $this->config();
+		$check = false;
+		if(isset($config['taxid']) && $config['taxid'] == 'on'){
+			$check_enable_customer_tax_id = $this->check_enable_customer_tax_id();
+			if($check_enable_customer_tax_id)
+				$check = true;
+		}
+		return $check;
 	}
 }
 ?>

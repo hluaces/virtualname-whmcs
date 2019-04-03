@@ -1,9 +1,9 @@
 <!--// *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.6.X
+// * WHMCS version 7.7.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.17
+// * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -247,6 +247,9 @@
                         jQuery("#subaccountfields").slideUp();
                     }
                 });
+                $('#identificationnumber').change(function() {
+                    $('#tax_id').val($(this).val());
+                });
             });
             {/literal}
             function deleteContactVNAME()
@@ -373,6 +376,7 @@
                             <label class="control-label" for="identificationnumber">{$LANG.clientIdentificationNumber}</label>
                                 <div class="controls">
                                     <input type="text" name="identificationnumber" id="identificationnumber" value="{$contactidentificationnumber}" />
+                                    <input type="text" name="tax_id" id="tax_id" value="{$contactidentificationnumber}" />
                                 </div>
                         </div>
                         <div class="control-group" {if $hideicnumber} style='display:none;' {/if}>
@@ -682,10 +686,11 @@
                 </div>
             </div>
 
-            <div class="control-group" style='display:none;'>
+            <div class="control-group" {if $hideicnumber} style='display:none;' {/if}>
                 <label class="control-label" for="identificationnumber">{$LANG.clientIdentificationNumber}</label>
                     <div class="controls">
                         <input type="text" name="identificationnumber" id="identificationnumber" value="{$contactidentificationnumber}" />
+                        <input type="text" name="tax_id" id="tax_id" value="{$contactidentificationnumber}" />
                     </div>
             </div>
 

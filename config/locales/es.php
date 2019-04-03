@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.6.X
+// * WHMCS version 7.7.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.17
+// * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -54,7 +54,7 @@
     $langs_vn['freeRenewDomains'] = 'No renovar dominios gratuitos';
     $langs_vn['secureRenovation'] = 'Número de horas antes de que se pueda volver a renovar un dominio desde WHMCS';
     $langs_vn['templateVersion'] = 'Establece la plantilla que se va a integrar a la vista de cliente';
-    $langs_vn['defaultvatnumber'] = 'Establece el campo personalizado del cliente que será utilizado como documento identificativo (en caso de que este se envíe en blanco en cualquiera de los contactos del cliente)';
+    $langs_vn['defaultvatnumber'] = 'Establece el campo personalizado del cliente que será utilizado como documento identificativo (en caso de que este se envíe en blanco en cualquiera de los contactos del cliente). <span style=\'color:red\'>Si el anterior campo VAT está marcado este no se aplicará.</span>';
     $langs_vn['disablelocktlds'] = 'Establece que extensiones de dominios van a mostrar un error al intentar ejecutar el bloqueo de transferencias. Para añadir nuevas extensiones introducir la extensión y un espacio como separador entre extensiones.';
     $langs_vn['devMode'] = 'Establece entorno de desarrollo';
     $langs_vn['debug'] = 'Establece el modo debug (se recomienda usar en modo mantenimiento)';
@@ -73,7 +73,7 @@
     $langs_vn['freeRenewDomainsField'] = 'Renovación de dominios gratuitos';
     $langs_vn['templateVersionField'] = 'Versión de plantilla';
     $langs_vn['secureRenovationField'] = 'Renovación de seguridad';
-    $langs_vn['defaultvatnumberField'] = 'Nº vat por defecto';
+    $langs_vn['defaultvatnumberField'] = 'Nº VAT por defecto';
     $langs_vn['disablelocktldsField'] = 'Desactivar bloqueo para TLDs';
     $langs_vn['devModeField'] = 'Modo desarrollo';
     $langs_vn['debugField'] = 'Modo debug';
@@ -213,6 +213,8 @@
     $langs_vn['transfer_on_renewal_inactive'] = 'Inactiva';
     $langs_vn['validationNewClient'] = 'No validar los datos de clientes nuevos durante el proceso de alta en caso de que haga un registro o transferencia de dominios';
     $langs_vn['validationNewClientField'] = 'Validar altas';
+    $langs_vn['taxidField'] = 'Nº VAT WHMCS';
+    $langs_vn['taxid'] = 'Utiliza el campo de cliente/contacto TAX ID (VAT NUMBER) que usa el WHMCS por defecto para la gestión de los documentos identificativos de los contactos. Solo para versiones de WHMCS 7.7 y superiores.';
     $langs_vn['error_fields']['phone'] = 'Teléfono';
     $langs_vn['error_fields']['state'] = 'Provincia';
     $langs_vn['error_fields']['name'] = 'Nombre';
