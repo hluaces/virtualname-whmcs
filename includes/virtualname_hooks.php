@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.6.X
+// * WHMCS version 7.7.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.17
+// * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -22,6 +22,7 @@ if($advance){
     add_hook('ContactAdd',  1,  'hook_contactAdd');
     add_hook('ContactDetailsValidation', 1,  'hook_contactEdit');
     add_hook('ClientDetailsValidation',  1,  'hook_contactEdit');
+    add_hook('ContactEdit', 1, 'hook_contactEdit');
     add_hook('AdminClientProfileTabFields', 1, 'hook_ic_legal_form_admin');
 }
 add_hook('AdminClientDomainsTabFields', 1, 'hook_domain_data');
@@ -110,6 +111,13 @@ function hook_contactEdit($var){
         if($var['contact'] == 'addingnew')
             return 0;
 
+    require_once(dirname(dirname(__FILE__)).'/../modules/registrars/virtualname/virtualname.php');
+    require_once(dirname(dirname(__FILE__)).'/../includes/functions.php');
+    //INIT MODULE
+    global $vname_admin, $vname_contacts;
+    virtualname_init();
+    $can_be_use_tax_id = $vname_admin->can_be_use_customer_tax_id();
+
     $userID     = $var['userid'];
     $contactID  = $var['contactid'];
     if($contactID){
@@ -124,7 +132,12 @@ function hook_contactEdit($var){
         $contact['address1']    = $var['address1'];
         $contact['postcode']    = $var['postcode'];
         $contact['phonenumber'] = $var['phonenumber'];
-        $contact['idnumber']    = $_POST['identificationnumber'];
+        #TAXID
+        if($can_be_use_tax_id)
+            $contact['idnumber'] = $var['tax_id'];
+        else
+            $contact['idnumber'] = $_POST['identificationnumber'];
+        #TAXID
         $contact['legal_form']  = $_POST['legal_form'];
         $contact['customfield'] = $var['customfield'];
     }
@@ -144,26 +157,27 @@ function hook_contactEdit($var){
         $contact['address1']    = $var['address1'];
         $contact['postcode']    = $var['postcode'];
         $contact['phonenumber'] = $var['phonenumber'];
-        if(isset($_POST['clientidentificationnumber']))
-            $ic = $_POST['clientidentificationnumber'];
-        elseif(isset($_POST['identificationnumber']))
-            $ic = $_POST['identificationnumber'];
-        else
-            $ic = '';
+        #TAXID
+        if($can_be_use_tax_id){
+            $contact['idnumber'] = $var['tax_id'];
+        }
+        else{
+            if(isset($_POST['clientidentificationnumber']))
+                $ic = $_POST['clientidentificationnumber'];
+            elseif(isset($_POST['identificationnumber']))
+                $ic = $_POST['identificationnumber'];
+            else
+                $ic = '';
+            $contact['idnumber']    =  $ic;
+        }
+        #TAXID
         if(isset($_POST['legal_form']))
             $legal_form = $_POST['legal_form'];
         else
             $legal_form = '';
-        $contact['idnumber']    =  $ic;
         $contact['legal_form']  = $legal_form;
         $contact['customfield'] = $var['customfield'];
     }
-
-    require_once(dirname(dirname(__FILE__)).'/../modules/registrars/virtualname/virtualname.php');
-    require_once(dirname(dirname(__FILE__)).'/../includes/functions.php');
-    //INIT MODULE
-    global $vname_contacts;
-    virtualname_init();
 
     $TCpanelWHMCS   = $vname_contacts->get_tcpanel_contact($contactID, $type);
     $TCpanelContact = $TCpanelWHMCS['id_contact_tcpanel'];
@@ -213,6 +227,13 @@ function hook_contactEdit($var){
 //LAUNCHED WHEN CONTACT WAS ADDED
 function hook_contactAdd($var){
 
+    require_once(dirname(dirname(__FILE__)).'/../modules/registrars/virtualname/virtualname.php');
+    require_once(dirname(dirname(__FILE__)).'/../includes/functions.php');
+    //INIT MODULE
+    global $vname_admin, $vname_contacts;
+    virtualname_init();
+    $can_be_use_tax_id = $vname_admin->can_be_use_customer_tax_id();
+
     $userID    = $var['userid'];
     $contactID = $var['contactid'];
 
@@ -228,19 +249,18 @@ function hook_contactAdd($var){
         $contact['address1']    = $var['address1'];
         $contact['postcode']    = $var['postcode'];
         $contact['phonenumber'] = $var['phonenumber'];
-        $contact['idnumber']    = $_POST['identificationnumber'];
+        #TAX_ID
+        if($can_be_use_tax_id)
+            $contact['idnumber'] = $var['tax_id'];
+        else
+            $contact['idnumber'] = $_POST['identificationnumber'];
+        #TAX_ID
         $contact['legal_form']  = $_POST['legal_form'];
     }
     else{
         $contactID = 0;
         $type      = 1;
     }
-
-    require_once(dirname(dirname(__FILE__)).'/../modules/registrars/virtualname/virtualname.php');
-    require_once(dirname(dirname(__FILE__)).'/../includes/functions.php');
-    //INIT MODULE
-    global $vname_contacts;
-    virtualname_init();
 
     $TCpanelWHMCS   = $vname_contacts->get_tcpanel_contact($contactID, $type);
     $TCpanelContact = $TCpanelWHMCS['id_contact_tcpanel'];
@@ -430,10 +450,10 @@ function hook_ic_legal_form_admin($vars) {
     $legal_form = $tcpanel_contact['legal_form'];
     $idnumber = $tcpanel_contact['identification_number'];
     $legalSelect = $vname_contacts->get_legal_forms($langs['legal_form'], $legal_form);
-    return array(
-        $langs['legal_form_field'] => $legalSelect,
-        $langs['identification_number'] => '<input type=\'text\' name=\'identificationnumber\' class=\'form-control input-250\' value=\''.$idnumber.'\'/>',
-    );
+    $response = array($langs['legal_form_field'] => $legalSelect);
+    if(!$vname_admin->can_be_use_customer_tax_id())
+        $response[$langs['identification_number']] = '<input type=\'text\' name=\'identificationnumber\' class=\'form-control input-250\' value=\''.$idnumber.'\'/>';
+    return $response;
 }
 
 //VALIDATE IF THE CURRENT DOMAIN WAS ASSIGNED WITH VIRTUALNAME

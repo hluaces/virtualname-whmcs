@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.6.X
+// * WHMCS version 7.7.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.17
+// * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -103,6 +103,9 @@ if(isset($domainid) AND $domainid != 0){
     redir('action=domaincontacts&domainid='.$domainid, 'clientarea.php');
 }
 
+//CHECK TAX_ID ENABLE
+$check_tax_id_enable = virtualname_check_if_tax_id_enable();
+
 //CHECK VALIDATE CUSTOM ACTIONS
 $virtualname_posible_actions = array('details', 'contacts', 'addcontact', 'domaincontacts', 'generateContact');
 if ($currentAction == '' || !in_array($currentAction, $virtualname_posible_actions)) {
@@ -178,16 +181,19 @@ else {
       $clientArea->assign('marketingEmailOptIn', false);
     }
     $userid       = $client->getID();
-    $idNumber     = virtualname_get_identification_number($userid, 1);
+    //TAX_ID
+    $identificationContact = virtualname_get_identification_number($userid, 1);
+    if($check_tax_id_enable)
+      $idNumber   = $whmcs->get_req_var_if($e, 'tax_id', $exdetails);
+    else
+      $idNumber   = $identificationContact;
     $legalContact = virtualname_get_legal_form_contact($userid, 1);
     $hideicnumber = virtualname_get_hide_config();
     $legal_forms  = virtualname_get_legal_forms($whmcs->get_lang('legal_form'), $legalContact);
 
     //IF 0 the user not was added in the system
-    if($idNumber == 'EMPTY'){
-      $idNumber = 'N/A';
+    if($identificationContact == 'EMPTY')
       $validateTcpanel = '0';
-    }
     else
       $validateTcpanel = '1';
 
@@ -236,7 +242,11 @@ else {
     $password    = '';
     $permissions = '';
 
-    $contactID = addContact($client->getID(), $firstname, $lastname, $companyname, $email, $address1, '', $city, $state, $postcode, $country, $phonenumber, $password, $permissions,0, 0, 0, 0, 0);
+    //TAX_ID
+    if($check_tax_id_enable)
+      $contactID = addContact($client->getID(), $firstname, $lastname, $companyname, $email, $address1, '', $city, $state, $postcode, $country, $phonenumber, $password, $permissions, 0, 0, 0, 0, 0, 0, $ic);
+    else
+      $contactID = addContact($client->getID(), $firstname, $lastname, $companyname, $email, $address1, '', $city, $state, $postcode, $country, $phonenumber, $password, $permissions, 0, 0, 0, 0, 0);
     if ($contactID) {
       $table = 'mod_contacts_virtualname_tcpanel';
       //CHECK IF CONTACT EXIST
@@ -403,8 +413,17 @@ else {
 
       $smartyvalues['errormessage'] = $errormessage;
 
+      if($_POST['identificationnumber'] != '')
+        $ic = $_POST['identificationnumber'];
+      else
+        $ic = 'N/A';
+
       if (!$errormessage) {
-        $contactid = addContact($client->getID(), $firstname, $lastname, $companyname, $email, $address1, $address2, $city, $state, $postcode, $country, $phonenumber, $password, $permissions, $generalemails, $productemails, $domainemails, $invoiceemails, $supportemails);
+        //TAX_ID
+        if($check_tax_id_enable)
+          $contactid = addContact($client->getID(), $firstname, $lastname, $companyname, $email, $address1, $address2, $city, $state, $postcode, $country, $phonenumber, $password, $permissions, $generalemails, $productemails, $domainemails, $invoiceemails, $supportemails, $affiliateemails, $_POST['identificationnumber']);
+        else
+          $contactid = addContact($client->getID(), $firstname, $lastname, $companyname, $email, $address1, $address2, $city, $state, $postcode, $country, $phonenumber, $password, $permissions, $generalemails, $productemails, $domainemails, $invoiceemails, $supportemails, $affiliateemails);
         redir('action=contacts&id='.$contactid.'&success=1');
         exit();
       }
@@ -427,7 +446,7 @@ else {
     $smartyvalues['contactstate'] = $state;
     $smartyvalues['contactpostcode'] = $postcode;
     $smartyvalues['contactphonenumber'] = $phonenumber;
-    $smartyvalues['contactidentificationnumber'] = 'N/A';
+    $smartyvalues['contactidentificationnumber'] = $ic;
     $smartyvalues['countriesdropdown'] = getCountriesDropDown($country);
     $smartyvalues['subaccount'] = $subaccount;
     $smartyvalues['permissions'] = $permissions;
@@ -496,16 +515,18 @@ else {
       $smartyvalues['errormessage'] = $errormessage;
 
       if (!$errormessage) {
-        $oldcontactdata = get_query_vals('tblcontacts', '', array('userid' => $client->getID(), 'id' => $whmcsContact));
+        #$oldcontactdata = get_query_vals('tblcontacts', '', array('userid' => $client->getID(), 'id' => $whmcsContact));
         $array = db_build_update_array(array('firstname', 'lastname', 'companyname', 'email', 'address1', 'address2', 'city', 'state', 'postcode', 'country', 'phonenumber', 'subaccount', 'permissions', 'generalemails', 'productemails', 'domainemails', 'invoiceemails', 'supportemails'), 'implode');
         $array['subaccount'] = ($subaccount ? '1': '0');
 
         if ($password) {
           $array['password'] = generateClientPW($password);
         }
-
+        if($check_tax_id_enable){
+          $array['tax_id'] = $_POST['identificationnumber'];
+        }
         update_query('tblcontacts', $array, array('userid' => $client->getID(), 'id' => $whmcsContact));
-        run_hook('ContactEdit', array_merge(array('userid' => $client->getID(), 'contactid' => $whmcsContact, 'olddata' => $oldcontactdata), $array));
+        //run_hook('ContactEdit', array_merge(array('userid' => $client->getID(), 'contactid' => $whmcsContact, 'olddata' => $oldcontactdata), $array));
         logActivity('Client Contact Modified - Contact ID: '.$whmcsContact.' - User ID: '.$client->getID());
         $smartyvalues['successful'] = true;
       }
@@ -545,12 +566,15 @@ else {
     $smartyvalues['contactstate'] = $whmcs->get_req_var_if($e, 'state', $contact_data);
     $smartyvalues['contactpostcode'] = $whmcs->get_req_var_if($e, 'postcode', $contact_data);
     $smartyvalues['contactphonenumber'] = $whmcs->get_req_var_if($e, 'phonenumber', $contact_data);
-    $idNumber = virtualname_get_identification_number($whmcsContact, 2);
+    //TAX_ID
+    $identificationContact = virtualname_get_identification_number($whmcsContact, 2);
+    if($check_tax_id_enable)
+      $idNumber   = $whmcs->get_req_var_if($e, 'tax_id', $contact_data);
+    else
+      $idNumber = $identificationContact;
     $legalContact = virtualname_get_legal_form_contact($whmcsContact, 2);
-    if($idNumber == 'EMPTY'){
-      $idNumber = 'N/A';
+    if($identificationContact == 'EMPTY')
       $validateTcpanel = '0';
-    }
     else
       $validateTcpanel = '1';
 
@@ -723,6 +747,15 @@ function virtualname_get_whmcs_version(){
   virtualname_init();
   $response = $vname_admin->get_whmcs_version();
   return substr($response, 0, 3);
+}
+
+function virtualname_check_if_tax_id_enable(){
+  //INIT MODULE
+  require_once(dirname(__FILE__).'/modules/registrars/virtualname/virtualname.php');
+  global $vname_admin;
+  virtualname_init();
+  $response = $vname_admin->can_be_use_customer_tax_id();
+  return $response;
 }
 
 ?>

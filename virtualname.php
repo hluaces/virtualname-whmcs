@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.6.X
+// * WHMCS version 7.7.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.17
+// * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -50,7 +50,13 @@ function virtualname_getConfigArray(){
         'freeRegisterDomains'       => array('Type' => 'yesno',     'Description' => $configLang['freeRegisterDomains'], 'FriendlyName' => $configLang['freeRegisterDomainsField']),
         'freeRenewDomains'          => array('Type' => 'yesno',     'Description' => $configLang['freeRenewDomains'], 'FriendlyName' => $configLang['freeRenewDomainsField']),
         'templateVersion'           => array('Type' => 'dropdown',  'Description' => $configLang['templateVersion'], 'Options' => 'six,five', 'Default' => 'six', 'FriendlyName' => $configLang['templateVersionField']),
-        'secureRenovation'          => array('Type' => 'dropdown',  'Description' => $configLang['secureRenovation'], 'Options' => 'Disabled,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24', 'Default' => 'Disabled', 'FriendlyName' => $configLang['secureRenovationField']),
+        'secureRenovation'          => array('Type' => 'dropdown',  'Description' => $configLang['secureRenovation'], 'Options' => 'Disabled,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24', 'Default' => 'Disabled', 'FriendlyName' => $configLang['secureRenovationField'])
+    );
+    //CHECK IF TAX_ID CAN BE USED
+    $check_enable_tax_id = $vname_admin->check_enable_customer_tax_id();
+    if($check_enable_tax_id)
+        $configarray = array_merge($configarray, array('taxid' => array('Type' => 'yesno',     'Description' => $configLang['taxid'], 'FriendlyName' => $configLang['taxidField'])));
+    $configarray = array_merge($configarray, array(
         'defaultvatnumber'          => array('Type' => 'dropdown',  'Description' => $configLang['defaultvatnumber'], 'Options' => $client_custom_fields, 'Default' => 'Disabled', 'FriendlyName' => $configLang['defaultvatnumberField']),
         'disablelocktlds'           => array('Type' => 'textarea',  'Description' => $configLang['disablelocktlds'], 'Rows' => '3', 'Cols' => '50', 'Default' => 'es com.es org.es edu.es', 'FriendlyName' => $configLang['disablelocktldsField']),
         'outboundTransferMailing'   => array('Type' => 'yesno',     'Description' => $configLang['outboundTransferMailing'], 'FriendlyName' => $configLang['outboundTransferMailingField']),
@@ -61,7 +67,7 @@ function virtualname_getConfigArray(){
         'validationNewClient'       => array('Type' => 'yesno',     'Description' => $configLang['validationNewClient'], 'FriendlyName' => $configLang['validationNewClientField']),
         'devMode'                   => array('Type' => 'yesno',     'Description' => $configLang['devMode'], 'FriendlyName' => $configLang['devModeField']),
         'debug'                     => array('Type' => 'yesno',     'Description' => $configLang['debug'], 'FriendlyName' => $configLang['debugField']),
-    );
+    ));
     if($custom_buttons['warnings'])
         $configarray['check-warnings']  = array('Type' => 'display',   'Description' => $custom_buttons['warnings'], 'FriendlyName' => $configLang['checkWarnings']);
     if($custom_buttons['crons'])

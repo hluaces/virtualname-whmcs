@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.6.X
+// * WHMCS version 7.7.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.17
+// * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -51,7 +51,11 @@ if($action == 'clientscontacts' || $action == 'clientscontactssave' || $action =
             if ($password && $password != $adminPage->lang('fields', 'password')) {
                 $array['password'] = generateClientPW($password);
             }
-            $contactid           = addContact($userid, $firstname, $lastname, $companyname, $email, $address1, $address2, $city, $state, $postcode, $country, $phonenumber, $password, $permissions, $generalemails, $productemails, $domainemails, $invoiceemails, $supportemails);
+            //CHECK NEW TAX_ID
+            if ($vname_admin->can_be_use_customer_tax_id())
+                $contactid = addContact($userid, $firstname, $lastname, $companyname, $email, $address1, $address2, $city, $state, $postcode, $country, $phonenumber, $password, $permissions, $generalemails, $productemails, $domainemails, $invoiceemails, $supportemails, $affiliateemails, $_POST['identificationnumber']);
+            else
+                $contactid = addContact($userid, $firstname, $lastname, $companyname, $email, $address1, $address2, $city, $state, $postcode, $country, $phonenumber, $password, $permissions, $generalemails, $productemails, $domainemails, $invoiceemails, $supportemails, $affiliateemails);
             $checkContactCreated = $vname_contacts->get_tcpanel_contact($contactid, 2);
             if($contactid AND $checkContactCreated)
                 $contactPage = '<div class=\'successbox\'><strong><span class=\'title\'>'.$_LANG['moduleactionsuccess'].'</span></strong><br>'.$_LANG['adminContactLinked'].'</div>';
@@ -60,7 +64,6 @@ if($action == 'clientscontacts' || $action == 'clientscontactssave' || $action =
             logActivity('Added Contact - User ID: ' . $userid . ' - Contact ID: ' . $contactid);
         }
         else {
-
             if(isset($linked))
                 $save_linked = true;
             else
@@ -72,7 +75,7 @@ if($action == 'clientscontacts' || $action == 'clientscontactssave' || $action =
                 $save_unlinked = false;
 
             if($contactid){
-                //NEW CONTACT VALUES
+                //NEW EDIT CONTACT VALUES
                 $vars = array('firstname' => $firstname, 'lastname' => $lastname, 'companyname' => $companyname, 'email' => $email, 'address1' => $address1,
                     'city' => $city, 'state' => $state, 'postcode' => $postcode, 'country' => $country,
                     'phonenumber' => $phonenumber, 'contactid' => $contactid, 'userid' => $userid, 'identificationnumber' => $_POST['identificationnumber'],
@@ -89,6 +92,9 @@ if($action == 'clientscontacts' || $action == 'clientscontactssave' || $action =
                     logActivity('Contact Modified - User ID: ' . $userid . ' - Contact ID: ' . $contactid);
                     $table = 'tblcontacts';
                     $array = array('firstname' => $firstname, 'lastname' => $lastname, 'companyname' => $companyname, 'email' => $email, 'address1' => $address1, 'city' => $city, 'state' => $state, 'postcode' => $postcode, 'country' => $country, 'phonenumber' => $phonenumber);
+                    //TAX_ID
+                    if ($vname_admin->can_be_use_customer_tax_id())
+                        $array['tax_id'] = $_POST['identificationnumber'];
                     $where = array('id' => $contactid);
                     $editResp = update_query($table, $array, $where);
                     if($editResp)
@@ -103,7 +109,6 @@ if($action == 'clientscontacts' || $action == 'clientscontactssave' || $action =
                     'city' => $city, 'state' => $state, 'postcode' => $postcode, 'country' => $country,
                     'phonenumber' => $phonenumber, 'contactid' => '', 'userid' => $userid, 'identificationnumber' => $_POST['identificationnumber'],
                     'legal_form' => $_POST['legal_form'], 'linked' => $save_linked, 'unlinked' => $save_unlinked);
-
                 $response = $vname_contacts->admin_contact_edit($vars);
                 if($response['error']){
                     foreach($response['error'] as $error){
@@ -115,6 +120,9 @@ if($action == 'clientscontacts' || $action == 'clientscontactssave' || $action =
                     $oldcontactdata = get_query_vals('tblclients', '', array('id' => $_SESSION['uid']));
                     $table = 'tblclients';
                     $array = array('firstname' => $firstname, 'lastname' => $lastname, 'companyname' => $companyname, 'email' => $email, 'address1' => $address1, 'city' => $city, 'state' => $state, 'postcode' => $postcode, 'country' => $country, 'phonenumber' => $phonenumber);
+                    //TAX_ID
+                    if ($vname_admin->can_be_use_customer_tax_id())
+                        $array['tax_id'] = $_POST['identificationnumber'];
                     $where = array('id' => $userid);
                     $editResp = update_query($table, $array, $where);
                     if($editResp)
@@ -249,11 +257,19 @@ if($action == 'clientscontacts' || $action == 'clientscontactssave' || $action =
         $permissions = array();
     }
     if($contactid){
-        $icnumber = $vname_contacts->get_identification_number($contactid, 2);
+        //TAX_ID
+        if($vname_admin->can_be_use_customer_tax_id())
+            $icnumber = $data['tax_id'];
+        else
+            $icnumber = $vname_contacts->get_identification_number($contactid, 2);
         $legal_form = $vname_contacts->get_legal_form_contact($contactid, 2);
     }
     else{
-        $icnumber = $vname_contacts->get_identification_number($userid, 1);
+        //TAX_ID
+        if($vname_admin->can_be_use_customer_tax_id())
+            $icnumber = $data['tax_id'];
+        else
+            $icnumber = $vname_contacts->get_identification_number($userid, 1);
         $legal_form = $vname_contacts->get_legal_form_contact($userid, 1);
     }
 
@@ -384,6 +400,10 @@ elseif ($action == 'generateContact'){
     //$contactID = addContact($userid, $firstname, $lastname, $companyname, $email, $address1, '', $city, $state, $postcode, $country, $phonenumber, $password, $permissions,0, 0, 0, 0, 0);
     $table = 'tblcontacts';
     $array = array('userid'=>$userid,'firstname' => $firstname, 'lastname' => $lastname, 'companyname' => $companyname, 'email' => $email, 'address1' => $address1, 'city' => $city, 'state' => $state, 'postcode' => $postcode, 'country' => $country, 'phonenumber' => $phonenumber);
+    //TAX_ID
+    if($vname_admin->can_be_use_customer_tax_id())
+        $array['tax_id'] = $identification_number;
+    //TAX_ID
     $where = array('id' => $contactid);
     $contactID = insert_query($table, $array);
 

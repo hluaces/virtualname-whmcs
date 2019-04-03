@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.6.X
+// * WHMCS version 7.7.X
 // * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.17
+// * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -54,7 +54,7 @@
     $langs_vn['freeRenewDomains'] = 'Not renew free domain';
     $langs_vn['secureRenovation'] = 'Number of hours before you can get back to renew a domain from WHMCS';
     $langs_vn['templateVersion'] = 'Sets the template to be integrated into the client view';
-    $langs_vn['defaultvatnumber'] = 'Sets the field personalized customer will be used as identification document (when it be send empty in any of client contacts)';
+    $langs_vn['defaultvatnumber'] = 'Sets the field personalized customer will be used as identification document (when it be send empty in any of client contacts). <span style=\'color:red\'>If the previous VAT field is checked, it will not be applied.</span>';
     $langs_vn['disablelocktlds'] = 'Set states that domain extensions will display an error when trying to run the transfers locks. To establish new extensions add the extension and a space as a separator between extensions';
     $langs_vn['devMode'] = 'Set development environment';
     $langs_vn['debug'] = 'Set debug response (please use only in maintenance mode)';
@@ -67,16 +67,16 @@
     $langs_vn['errorModuleVariables']   = 'Missing configuration variable';
     $langs_vn['errorModuleVariablesSave']   = 'Save this module configuration to solve this error.';
     $langs_vn['moduleVersion'] = 'Module Version';
-    $langs_vn['autoRenew'] = 'Autorenew';
-    $langs_vn['hideicnumber'] = 'Hide identification number';
-    $langs_vn['freeRegisterDomains'] = 'Free register domains';
-    $langs_vn['freeRenewDomains'] = 'Free renew domains';
+    $langs_vn['autoRenewField'] = 'Autorenew';
+    $langs_vn['hideicnumberField'] = 'Hide identification number';
+    $langs_vn['freeRegisterDomainsField'] = 'Free register domains';
+    $langs_vn['freeRenewDomainsField'] = 'Free renew domains';
     $langs_vn['templateVersion'] = 'Template version';
     $langs_vn['secureRenovation'] = 'Secure renovation';
-    $langs_vn['defaultvatnumber'] = 'Default vat number';
-    $langs_vn['disablelocktlds'] = 'Disable lock tlds';
-    $langs_vn['devMode'] = 'Dev mode';
-    $langs_vn['debug'] = 'Debug mode';
+    $langs_vn['defaultvatnumberField'] = 'Default vat number';
+    $langs_vn['disablelocktldsField'] = 'Disable lock tlds';
+    $langs_vn['devModeField'] = 'Dev mode';
+    $langs_vn['debugField'] = 'Debug mode';
     $langs_vn['installVirtualname'] = 'Install virtualname';
     $langs_vn['updateModule'] = 'Update module';
     $langs_vn['checkWarnings'] = 'Warnings';
@@ -213,6 +213,8 @@
     $langs_vn['transfer_on_renewal_inactive'] = 'Inactive';
     $langs_vn['validationNewClient'] = 'Do not validate new customer data during the registration process in case of register or transfer domains';
     $langs_vn['validationNewClientField'] = 'Validate new customers';
+    $langs_vn['taxidField'] = 'Default VAT Number WHMCS';
+    $langs_vn['taxid'] = 'Use the client/contact field TAX ID (VAT NUMBER) as default in WHMCS that will be used as identification document. Only for WHMCS version 7.7 and higher.';
     $langs_vn['error_fields']['phone'] = 'Phone';
     $langs_vn['error_fields']['state'] = 'State';
     $langs_vn['error_fields']['name'] = 'Nombre';
