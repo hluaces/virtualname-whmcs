@@ -11,6 +11,9 @@
 // * @common true
 // * File description: VIRTUALNAME DOMAIN class
 // *************************************************************************
+
+use PHPMailer\PHPMailer\PHPMailer;
+
 class Virtualname_domains extends Virtualname_api{
 	//GET AVAILABLE DOMAINS TLDs FROM TCPANEL
 	public function available_tlds($params){
@@ -1633,9 +1636,7 @@ class Virtualname_domains extends Virtualname_api{
 		//ADMIN URL
 		if ($admin_link)
 			$message .= '<p><a href=\'' . $admin_url . '\'>' . $admin_url . '</a></p>';
-		//INIT MAILER
-		if (!class_exists('PHPMailer'))
-			$whmcs->load_class('phpmailer');
+
 		$email = new PHPMailer();
 		$email->From = $CONFIG['SystemEmailsFromEmail'];
 		$email->FromName = html_entity_decode($CONFIG['SystemEmailsFromName'], ENT_QUOTES);
