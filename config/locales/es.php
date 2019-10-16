@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -86,7 +86,7 @@
     $langs_vn['updateconf'] = 'Actualizar el módulo de Virtualname-Tcpanel? Esta acción reinstalará el módulo.';
     $langs_vn['updateRegistrar'] = 'Actualizar Módulo Virtualname';
     $langs_vn['updateAvailable'] = 'Hay una actualización disponible para descargar';
-    $langs_vn['disableLockError'] = 'Esta extensión de dominio no disponible de bloqueo de registro';
+    $langs_vn['disableLockError'] = 'Esta extensión de dominio no dispone de bloqueo de registro';
     $langs_vn['filesWriteDisable'] = 'No se puede utilizar la instalación automática por los permisos de usuarios de PHP';
     $langs_vn['filesWriteDisableUpdate'] = 'No se puede utilizar la actualización automática por los permisos de usuarios de PHP';
     $langs_vn['cronoutbound']   = 'Transferencias salientes';
@@ -215,6 +215,8 @@
     $langs_vn['validationNewClientField'] = 'Validar altas';
     $langs_vn['taxidField'] = 'Nº VAT WHMCS';
     $langs_vn['taxid'] = 'Utiliza el campo de cliente/contacto TAX ID (VAT NUMBER) que usa el WHMCS por defecto para la gestión de los documentos identificativos de los contactos. Solo para versiones de WHMCS 7.7 y superiores.';
+    $langs_vn['disableContactVerificationField'] = 'Desactivar verificación';
+    $langs_vn['disableContactVerification'] = 'Desactivar verificación de datos de contactos y clientes si no están vinculados';
     $langs_vn['error_fields']['phone'] = 'Teléfono';
     $langs_vn['error_fields']['state'] = 'Provincia';
     $langs_vn['error_fields']['name'] = 'Nombre';

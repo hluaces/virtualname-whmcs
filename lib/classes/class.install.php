@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -40,7 +40,7 @@ class Virtualname_install extends Virtualname_admin{
 	        $customadminpath = 'admin';
 
 	    //CHECK VIRTUALNAME VARIABLES
-	    $virtualname_variables = array('APIKey','autoRenew','hideicnumber','freeRegisterDomains','freeRenewDomains','templateVersion','secureRenovation','defaultvatnumber','devMode','debug','install-virtualname','disablelocktlds','outboundTransferMailing','defaultNameserversError', 'disableAdvanceContacts', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient');
+	    $virtualname_variables = array('APIKey','autoRenew','hideicnumber','freeRegisterDomains','freeRenewDomains','templateVersion','secureRenovation','defaultvatnumber','devMode','debug','install-virtualname','disablelocktlds','outboundTransferMailing','defaultNameserversError', 'disableAdvanceContacts', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'disableContactVerification');
 	    foreach($virtualname_variables as $variable){
 	        $where = array('registrar'=>'virtualname','setting'=>$variable);
 	        $var_search = select_query('tblregistrars','value',$where);

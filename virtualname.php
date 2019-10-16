@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -65,6 +65,7 @@ function virtualname_getConfigArray(){
         'defaultDomainsMail'        => array('Type' => 'text',      'Description' => $configLang['addDefaultDomainsMail'], 'FriendlyName' => $configLang['addDefaultDomainsMailField']),
         'defaultAdminRoles'         => array('Type' => 'dropdown',  'Description' => $configLang['defaultAdminRoles'], 'Options' => $custom_buttons['roles'], 'Default' => 'six', 'FriendlyName' => $configLang['defaultAdminRolesField']),
         'validationNewClient'       => array('Type' => 'yesno',     'Description' => $configLang['validationNewClient'], 'FriendlyName' => $configLang['validationNewClientField']),
+        'disableContactVerification'=> array('Type' => 'yesno',     'Description' => $configLang['disableContactVerification'], 'FriendlyName' => $configLang['disableContactVerificationField']),
         'devMode'                   => array('Type' => 'yesno',     'Description' => $configLang['devMode'], 'FriendlyName' => $configLang['devModeField']),
         'debug'                     => array('Type' => 'yesno',     'Description' => $configLang['debug'], 'FriendlyName' => $configLang['debugField']),
     ));

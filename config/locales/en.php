@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -215,6 +215,8 @@
     $langs_vn['validationNewClientField'] = 'Validate new customers';
     $langs_vn['taxidField'] = 'Default VAT Number WHMCS';
     $langs_vn['taxid'] = 'Use the client/contact field TAX ID (VAT NUMBER) as default in WHMCS that will be used as identification document. Only for WHMCS version 7.7 and higher.';
+    $langs_vn['disableContactVerificationField'] = 'Deactivate contacts verification';
+    $langs_vn['disableContactVerification'] = 'Disables verification of contact and customer data if they are not linked';
     $langs_vn['error_fields']['phone'] = 'Phone';
     $langs_vn['error_fields']['state'] = 'State';
     $langs_vn['error_fields']['name'] = 'Nombre';

@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -31,7 +31,7 @@ add_hook('AdminHomepage', 1, 'hook_admin_version_popup');
 add_hook('DomainEdit', 1, 'hook_domain_save');
 add_hook('PreRegistrarRenewDomain', 1, 'hook_transfer_on_renewal');
 add_hook('AfterShoppingCartCheckout', 1, 'hook_admin_set_transfer_order');
-
+add_hook('ClientAreaFooterOutput', 1,  'hook_client_gluerecords');
 
 ############################################################
 ############HOOK FUNCTIONS##################################
@@ -593,6 +593,38 @@ function hook_disable_admin_buttons($vars){
         });
     </script>';
     return array('' => $disable_button);
+}
+
+function hook_client_gluerecords($vars){
+    if(isset($_GET) && isset($_GET['action']) && $_GET['action'] == 'domainregisterns'){
+        $domainid = $vars['domainid'];
+        $check = hook_virtualname_check_domain($domainid);
+        $response = '';
+        if($check){
+            global $vname_admin, $vname_domains, $vname_nameservers;
+            $domain = $vname_domains->get_whmcs_domain('', $domainid);
+            $hosts = $vname_nameservers->get_domain_gluerecords($domain['domain']);
+            if(count($hosts) > 0){
+                $response = "<h4>Glue Records</h4>";
+                $response .= "<table class=\"table table-list dataTable no-footer dtr-inline\">";
+                $response .= "<thead><tr><th>Glue record</th><th>IPs</th></thead><tbody>";
+                foreach($hosts as $key => $value)
+                    $response .= '<tr><td>'.$key.'.'.$domain['domain'].'</td><td>'.implode(",", $value['ips']).'</td></tr>';
+                $response .= "</tbody></table>";
+                $response .= "<br><br>";
+            }
+            else
+                return '';
+        }
+        else
+            return '';
+        $js = "<script type='text/javascript'>
+                var div = document.createElement('div');
+                div.innerHTML = '".$response."'.trim();
+                $(\".form-horizontal\")[0].prepend(div);
+        </script>";
+        return $js;
+    }
 }
 
 ?>

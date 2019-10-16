@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -380,7 +380,7 @@ else {
             ->setUri('clientarea.php?action=domainregisterns&domainid=' . $domainId)
             ->setLabel($whmcs->get_lang('domainprivatenameservers'))
             ->setOrder(160);
-          if($tlddata['eppcode'] == 'on'){
+          if($tlddata['eppcode'] != 0){
             $primarySidebar->getChild('Domain Details Management')
               ->addChild('Get EPP Code')
               ->setUri('clientarea.php?action=domaingetepp&domainid=' . $domainId)

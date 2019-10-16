@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -13,7 +13,8 @@
 // *************************************************************************
 class Virtualname_admin{
 	#CLASS CONSTANTS#
-	public $module_version = '1.1.18';
+
+	public $module_version = '1.1.19';
 	public $vn_module_dir = 'modules/registrars/virtualname/';
 	public $vn_whmcs_dir;
 	public $vn_whmcs_version = '7';
@@ -238,7 +239,7 @@ class Virtualname_admin{
 	    );
 	    //GET ALL CONFIGS
 	    if(!isset($params) || !isset($configarray['APIKey'])){
-	        $configs = array('APIKey', 'devMode', 'defaultvatnumber', 'hideicnumber', 'disablelocktlds', 'outboundTransferMailing', 'defaultNameserversError', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'taxid');
+	        $configs = array('APIKey', 'devMode', 'defaultvatnumber', 'hideicnumber', 'disablelocktlds', 'outboundTransferMailing', 'defaultNameserversError', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'taxid', 'disableContactVerification');
 	        $table = 'tblregistrars';
 	        $fields = 'value';
 	        foreach($configs as $setting){

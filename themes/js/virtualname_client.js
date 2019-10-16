@@ -1,15 +1,18 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
 // * File description: CLIENT JS FILE
 // *************************************************************************
 jQuery(document).ready(function(){
+    update_urls();
+});
+function update_urls(){
     var links = document.getElementsByTagName('a');
     for (var l in links){
         var parser = document.createElement('a');
@@ -37,4 +40,9 @@ jQuery(document).ready(function(){
             links[l].href = resLink;
         }
     }
+}
+$(document).ready(function() {
+    $('#tableDomainsList')
+        .on( 'draw.dt',  function () { update_urls(); } )
+        .dataTable();
 });

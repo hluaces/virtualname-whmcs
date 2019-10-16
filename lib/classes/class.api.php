@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -43,7 +43,6 @@ class Virtualname_api extends Virtualname_admin{
 	    //HEADERS
 	    $virtualname_header[] = 'X-TCpanel-Token: '.$params['APIKey'];
 	    $virtualname_header[] = 'X-TCPanel-Plugin-Version' . $config['pluginVersion'];
-	    //$virtualname_header[] = 'Host: api.virtualname.local';
 	    $virtualname_header[] = 'Content-Type: application/json';
 	    //CURL CONEXION
 	    if($module != '')

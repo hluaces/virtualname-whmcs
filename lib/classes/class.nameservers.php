@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -123,5 +123,15 @@ class Virtualname_nameservers extends Virtualname_domains{
                 $values['error'] .= ': '.implode(',', $request['response']['name']);
         }
 	}
+    public function get_domain_gluerecords($domain){
+        //INIT MODULE
+        global $vname_admin, $vname_domains;
+        virtualname_init();
+        $domain_info = $vname_domains->view_domain_info_hook($domain);
+        $params = $vname_admin->config();
+        $values = $this->get_domain_hosts($params, $domain_info['domain_id']);
+        //$vname_domains->destroy_domain_cache($domain);
+        return $values;
+    }
 }
 ?>

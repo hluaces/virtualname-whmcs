@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2018, Virtualname
-// * @version 1.1.18
+// * WHMCS version 7.8.X
+// * @copyright Copyright (c) 2019, Virtualname
+// * @version 1.1.19
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -258,7 +258,7 @@ class Virtualname_domains extends Virtualname_api{
 	    $response['adm_id'] = $info['contacts']['administrative']['id'];
 	    $response['bill_id'] = $info['contacts']['billing']['id'];
 	    $response['tech_id'] = $info['contacts']['technical']['id'];
-
+	    $response['domain_id'] = $info['id'];
 	    return $response;
 	}
 	//GET IF CURRENT DOMAIN WAS RENEWED AFTER SET TIME IN CONFIG
@@ -1574,8 +1574,10 @@ class Virtualname_domains extends Virtualname_api{
         	//CHANGE ADMIN EMAIL
             if(!$response_mail['error']){
             	if(empty($transfer_domain['admin_email']) || $transfer_domain['value'] != $values['Admin'][$email_field]){
+            		$registrant = $vars['params']['contactdetails']['Registrant'];
                     $contacts_response = $vname_contacts->transfer_contact_registrar($values, $vars['params']['registrar'], $transfer_domain['value']);
                     $vars['params']['contactdetails'] = $contacts_response['contacts'];
+                    $vars['params']['contactdetails']['Registrant'] = $registrant;
                     $response_set_mail = RegSaveContactDetails($vars['params']);
                     if(!$response_set_mail['error'] AND $response_set_mail['success']){
                     	$this->set_email_transfer_on_renewal($domainid, $values['Admin'][$email_field]);
