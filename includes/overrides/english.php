@@ -7,9 +7,9 @@ if (!defined('WHMCS')) die('This file cannot be accessed directly');
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.8.X
-// * @copyright Copyright (c) 2019, Virtualname
-// * @version 1.1.19
+// * WHMCS version 7.9.X
+// * @copyright Copyright (c) 2020, Virtualname
+// * @version 1.1.20
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -45,6 +45,7 @@ $_LANG['adminUpdatedContactsError'] = 'Domain contacts not updated: Only can lin
 $_LANG['adminUpdatedContacts'] = 'Domain contacts updated';
 $_LANG['adminDefaultContact'] = 'Use client data';
 $_LANG['admingenerate'] = 'Import Domain Contact';
+$_LANG['legal_form_contact'] = 'Legal form contact';
 $_LANG['clientIdentificationNumber'] = 'Identification Number (CIF, DNI, NIE)';
 $_LANG['legal_form']['natural_person_or_individual'] = 'Natural person or individual';
 $_LANG['legal_form']['economic_interest_group'] = 'Economic interest grouping';
@@ -86,4 +87,11 @@ $_LANG['legal_form']['designation_of_origin_control_board'] = 'Designation of or
 $_LANG['legal_form']['natural_space_agency_manager'] = 'Natural space agency manager';
 $_LANG['modify_glue_records'] = 'Can\'t modify nameserver';
 $_LANG['delete_glue_records'] = 'Can\'t delete nameserver';
+$_LANG['virtualname']['name'] = 'Name';
+$_LANG['virtualname']['content'] = 'Content';
+$_LANG['virtualname']['delete'] = 'Delete';
+$_LANG['records']['description'] = 'DNS Records creation and management (Records: SOA, MX, A, AAAA, CNAME...).';
+$_LANG['records']['create'] = 'Create record';
+$_LANG['records']['notfound'] = 'This domain not have records.';
+$_LANG['zone']['notfound'] = 'This domain not have DNS Zone. Please contact with your administrator to create it.';
 ######VIRTUALNAME REGISTRAR LANGS######

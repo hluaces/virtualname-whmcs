@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.8.X
-// * @copyright Copyright (c) 2019, Virtualname
-// * @version 1.1.19
+// * WHMCS version 7.9.X
+// * @copyright Copyright (c) 2020, Virtualname
+// * @version 1.1.20
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -14,7 +14,7 @@
 class Virtualname_admin{
 	#CLASS CONSTANTS#
 
-	public $module_version = '1.1.19';
+	public $module_version = '1.1.20';
 	public $vn_module_dir = 'modules/registrars/virtualname/';
 	public $vn_whmcs_dir;
 	public $vn_whmcs_version = '7';
@@ -239,7 +239,7 @@ class Virtualname_admin{
 	    );
 	    //GET ALL CONFIGS
 	    if(!isset($params) || !isset($configarray['APIKey'])){
-	        $configs = array('APIKey', 'devMode', 'defaultvatnumber', 'hideicnumber', 'disablelocktlds', 'outboundTransferMailing', 'defaultNameserversError', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'taxid', 'disableContactVerification');
+	        $configs = array('APIKey', 'devMode', 'defaultvatnumber', 'hideicnumber', 'disablelocktlds', 'outboundTransferMailing', 'defaultNameserversError', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'taxid', 'disableContactVerification', 'enableDomainRecords');
 	        $table = 'tblregistrars';
 	        $fields = 'value';
 	        foreach($configs as $setting){
@@ -456,5 +456,15 @@ class Virtualname_admin{
 		}
 		return $check;
 	}
+
+    //CHECK DNS RECORDS MANAGEMENT ID NOT DISABLED
+    public function check_enable_dns_records_management(){
+        $config = $this->config();
+        $check = false;
+        if(isset($config['enableDomainRecords']) && $config['enableDomainRecords'] == 'on')
+           $check = true;
+        return $check;
+    }
+
 }
 ?>

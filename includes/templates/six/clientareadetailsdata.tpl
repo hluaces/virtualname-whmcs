@@ -1,9 +1,9 @@
 <!--// *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.8.X
-// * @copyright Copyright (c) 2019, Virtualname
-// * @version 1.1.19
+// * WHMCS version 7.9.X
+// * @copyright Copyright (c) 2020, Virtualname
+// * @version 1.1.20
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -184,9 +184,7 @@
         </form>
     </div>
 
-    <script type="text/javascript">
-        $(".header-lined").prependTo("#rightMenu");
-    </script>
+
 {/if}
 
 {if $currentAction == 'contacts'}
@@ -688,9 +686,7 @@
 
         </form>
     </div>
-    <script type="text/javascript">
-        $(".header-lined").prependTo("#rightMenu");
-    </script>
+
 {/if}
 
 {if $currentAction == 'domaincontacts'}
@@ -787,7 +783,172 @@
             <p><input type="submit" value="{$LANG.clientareabacklink}" class="btn" /></p>
         </form>
     </div>
-    <script type="text/javascript">
-        $(".header-lined").prependTo("#rightMenu");
-    </script>
+
 {/if}
+
+{if $currentAction == 'domainrecords'}
+ 
+    {literal}
+    <script language="javascript">
+    $('#Primary_Sidebar-Domain_Details_Management-Domains_DNS_Records').addClass('active');
+    </script>
+    {/literal}
+
+    {if $successful}
+        {include file="$template/includes/alert.tpl" type="success" msg=$LANG.changessavedsuccessfully textcenter=true}
+    {/if}
+
+    {if $errormessage}
+        {if $errormessage == 'zonenotfound'}
+            {include file="$template/includes/alert.tpl" type="error" errorshtml="{$LANG.zone.notfound}"}
+        {else}
+            {include file="$template/includes/alert.tpl" type="error" errorshtml=$errormessage}
+        {/if}
+    {/if}
+
+
+    {include file="$template/includes/alert.tpl" type="info" msg="{$LANG.records.description}"}
+
+    <h3>{$LANG.domainaddonsdnsmanagement}</h3>
+    {if $records && $records > 0}
+        <table class="table table-list dataTable no-footer dtr-inline">
+            <thead>
+                <tr>
+                    <th>{$LANG.virtualname.name}</th>
+                    <th>{$LANG.domaindnsrecordtype}</th>
+                    <th>TTL</th>
+                    <th>{$LANG.domaindnspriority}</th>
+                    <th>{$LANG.virtualname.content}</th>
+                    <th>{$LANG.actions}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {foreach from=$records name=records key=record item=values}
+                <tr>
+                    <td>
+                        {if $values.name == ''}
+                            -
+                        {else}
+                            {$values.name}
+                        {/if}
+                    </td>
+                    <td>{$values.type}</td>
+                    <td>{$values.ttl}</td>
+                    <td>
+                        {if $values.prio == ''}
+                            -
+                        {else}
+                            {$values.prio}
+                        {/if}
+                    </td>
+                    <td>{$values.content}</td>
+                    <td>
+                        {if $values.type != 'SOA' && $values.type != 'NS'}
+                            <form class="form-horizontal" role="form" method="post" action="{$smarty.server.PHP_SELF}?action=domainrecords&domainid={$domainid}">
+                                <input type="hidden" name="sub" value="delete" />
+                                <input type="hidden" name="domainid" value="{$domainid}" />
+                                <input type="hidden" name="recordid" value="{$values.id}" />
+                                <p class="text-center">
+                                    <input type="submit" value="{$LANG.virtualname.delete}" class="btn btn-sm btn-danger" />
+                                </p>
+                            </form>
+                        {/if}
+                    </td>
+                </tr>
+            {/foreach}
+            </tbody>
+        </table>
+        <br><br>
+
+        <form class="form-horizontal" role="form" method="post" action="{$smarty.server.PHP_SELF}?action=domainrecords&domainid={$domainid}">
+            <input type="hidden" name="sub" value="create" />
+            <input type="hidden" name="domainid" value="{$domainid}" />
+
+            <h4>{$LANG.records.create}</h4>
+
+            <div class="form-group">
+                <label for="recordname" class="col-xs-4 control-label">{$LANG.virtualname.name}</label>
+                <div class="col-xs-3">
+                    <input type="text" class="form-control" id="recordname" name="recordname" />
+                </div>
+                <div class="col-xs-5">
+                    . {$domain}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="recordtype" class="col-xs-4 control-label">{$LANG.domaindnsrecordtype}</label>
+                <div class="col-xs-6 col-sm-5">
+                    <select name="recordtype" id="recordtype" class="field form-control">
+                        <option value="A">A</option>
+                        <option value="AAAA">AAAA</option>
+                        <option value="CNAME">CNAME</option>
+                        <option value="MX">MX</option>
+                        <option value="TXT">TXT</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="ttl" class="col-xs-4 control-label">TTL</label>
+                <div class="col-xs-6 col-sm-5">
+                    <select name="ttl" id="ttl" class="field form-control">
+                        <option value="7200">7200</option>
+                        <option value="60">Un minuto</option>
+                        <option value="300">5 minutos</option>
+                        <option value="600">10 minutos</option>
+                        <option value="900">15 minutos</option>
+                        <option value="1800">30 minutos</option>
+                        <option value="3600">1 hora</option>
+                        <option value="7200">2 horas</option>
+                        <option value="14400">4 horas</option>
+                        <option value="28800">8 horas</option>
+                        <option value="43200">12 horas</option>
+                        <option value="57600">16 horas</option>
+                        <option value="72000">20 horas</option>
+                        <option value="86400">Un día</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="prio" class="col-xs-4 control-label">{$LANG.domaindnspriority}</label>
+                <div class="col-xs-6 col-sm-5">
+                    <select name="prio" id="prio" class="field form-control">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                        <option value="30">30</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="content" class="col-xs-4 control-label">{$LANG.virtualname.content}</label>
+                <div class="col-xs-6 col-sm-5">
+                    <input type="text" class="form-control" id="content" name="content" />
+                </div>
+            </div>
+
+            <p class="text-center">
+                <input type="submit" value="{$LANG.clientareasavechanges}" class="btn btn-primary" />
+            </p>
+
+        </form>
+
+
+    {else}
+        {include file="$template/includes/alert.tpl" type="info" msg="{$LANG.records.notfound}"}
+    {/if}
+
+{/if}
+
+<script type="text/javascript">
+    $(".header-lined").prependTo("#rightMenu");
+</script>

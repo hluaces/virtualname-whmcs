@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.8.X
-// * @copyright Copyright (c) 2019, Virtualname
-// * @version 1.1.19
+// * WHMCS version 7.9.X
+// * @copyright Copyright (c) 2020, Virtualname
+// * @version 1.1.20
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -32,10 +32,38 @@ add_hook('DomainEdit', 1, 'hook_domain_save');
 add_hook('PreRegistrarRenewDomain', 1, 'hook_transfer_on_renewal');
 add_hook('AfterShoppingCartCheckout', 1, 'hook_admin_set_transfer_order');
 add_hook('ClientAreaFooterOutput', 1,  'hook_client_gluerecords');
+add_hook('ClientAreaPrimarySidebar', 1, 'hook_add_menu_dns_records');
 
 ############################################################
 ############HOOK FUNCTIONS##################################
 ############################################################
+
+// ADD MENU ITEM NEW
+function hook_add_menu_dns_records($primarySidebar){
+    $version_popup = '';
+    require_once(dirname(dirname(__FILE__)).'/../modules/registrars/virtualname/virtualname.php');
+    //INIT MODULE
+    global $vname_admin;
+    virtualname_init();
+    $params = $vname_admin->config();
+    if($params['enableDomainRecords'] && $params['enableDomainRecords'] == 'on'){
+        if(isset($_GET) && isset($_GET['action']) && in_array($_GET['action'],['domaindetails','domaincontacts','domainregisterns','domaingetepp','domainrecords'])){
+            if($_GET['domainid'])
+                $domainid = $_GET['domainid'];
+            elseif($_GET['id'])
+                $domainid = $_GET['id'];
+            else
+                return false;
+            if (!is_null($primarySidebar->getChild('Domain Details Management'))) {
+               $primarySidebar->getChild('Domain Details Management')
+               ->addChild('Domains DNS Records')
+               ->setLabel('Zonas DNS')
+               ->setUri('clientareadata.php?action=domainrecords&domainid='.$domainid)
+               ->setOrder(1000);
+            }
+        }
+    }
+}
 
 //POPUP NEW VERSION
 function hook_admin_version_popup($var){

@@ -2,7 +2,7 @@
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
 // * WHMCS version 7.7.X
-// * @copyright Copyright (c) 2019, Virtualname
+// * @copyright Copyright (c) 2020, Virtualname
 // * @version 1.1.18
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
