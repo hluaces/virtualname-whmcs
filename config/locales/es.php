@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.8.X
-// * @copyright Copyright (c) 2019, Virtualname
-// * @version 1.1.19
+// * WHMCS version 7.9.X
+// * @copyright Copyright (c) 2020, Virtualname
+// * @version 1.1.20
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -217,6 +217,8 @@
     $langs_vn['taxid'] = 'Utiliza el campo de cliente/contacto TAX ID (VAT NUMBER) que usa el WHMCS por defecto para la gestión de los documentos identificativos de los contactos. Solo para versiones de WHMCS 7.7 y superiores.';
     $langs_vn['disableContactVerificationField'] = 'Desactivar verificación';
     $langs_vn['disableContactVerification'] = 'Desactivar verificación de datos de contactos y clientes si no están vinculados';
+    $langs_vn['enableDomainRecordsField'] = 'Habilitar registros DNS';
+    $langs_vn['enableDomainRecords'] = 'Habilitar gestión de registros DNS';
     $langs_vn['error_fields']['phone'] = 'Teléfono';
     $langs_vn['error_fields']['state'] = 'Provincia';
     $langs_vn['error_fields']['name'] = 'Nombre';

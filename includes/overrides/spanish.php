@@ -7,9 +7,9 @@ if (!defined('WHMCS')) die('This file cannot be accessed directly');
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.8.X
-// * @copyright Copyright (c) 2019, Virtualname
-// * @version 1.1.19
+// * WHMCS version 7.9.X
+// * @copyright Copyright (c) 2020, Virtualname
+// * @version 1.1.20
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -87,4 +87,11 @@ $_LANG['legal_form']['designation_of_origin_control_board'] = 'Consejo regulador
 $_LANG['legal_form']['natural_space_agency_manager'] = 'Organismo gestor de espacio natural';
 $_LANG['modify_glue_records'] = 'No se puede editar el nameserver';
 $_LANG['delete_glue_records'] = 'No se puede eliminar el nameserver';
+$_LANG['virtualname']['name'] = 'Nombre';
+$_LANG['virtualname']['content'] = 'Contenido';
+$_LANG['virtualname']['delete'] = 'Borrar';
+$_LANG['records']['description'] = 'Desde aquí puede crear y administrar registros DNS para su dominio (por ejemplo: registros SOA, MX, A, AAAA, etc...).';
+$_LANG['records']['create'] = 'Crear registro';
+$_LANG['records']['notfound'] = 'No hay registros creados para este dominio.';
+$_LANG['zone']['notfound'] = 'No hay zonas DNS creadas para este dominio. Póngase en contacto con un administrador para crearlos.';
 ######VIRTUALNAME REGISTRAR LANGS######

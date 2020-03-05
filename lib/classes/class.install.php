@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.8.X
-// * @copyright Copyright (c) 2019, Virtualname
-// * @version 1.1.19
+// * WHMCS version 7.9.X
+// * @copyright Copyright (c) 2020, Virtualname
+// * @version 1.1.20
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -40,7 +40,7 @@ class Virtualname_install extends Virtualname_admin{
 	        $customadminpath = 'admin';
 
 	    //CHECK VIRTUALNAME VARIABLES
-	    $virtualname_variables = array('APIKey','autoRenew','hideicnumber','freeRegisterDomains','freeRenewDomains','templateVersion','secureRenovation','defaultvatnumber','devMode','debug','install-virtualname','disablelocktlds','outboundTransferMailing','defaultNameserversError', 'disableAdvanceContacts', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'disableContactVerification');
+	    $virtualname_variables = array('APIKey','autoRenew','hideicnumber','freeRegisterDomains','freeRenewDomains','templateVersion','secureRenovation','defaultvatnumber','devMode','debug','install-virtualname','disablelocktlds','outboundTransferMailing','defaultNameserversError', 'disableAdvanceContacts', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'disableContactVerification', 'enableDomainRecords');
 	    foreach($virtualname_variables as $variable){
 	        $where = array('registrar'=>'virtualname','setting'=>$variable);
 	        $var_search = select_query('tblregistrars','value',$where);
@@ -723,17 +723,6 @@ class Virtualname_install extends Virtualname_admin{
         }
         return $response;
     }
-    //DELETE VERSION LINES
-    public function clean_version($string, $needle){
-    	$pos_start = strpos($string, PHP_EOL.$needle);
-    	if($pos_start != 0 || $pos_start != false){
-        	$pos_end = strpos($string, $needle.PHP_EOL, $pos_start + strlen($needle));
-        	$lang_str_start = substr($string, 0, $pos_start);
-        	$lang_str_end = substr($string, $pos_end + strlen($needle.PHP_EOL));
-        	$string = $lang_str_start.$lang_str_end;
-        }
-        return $string;
-    }
     //DELETE CUSTOM LINES IN OVERRIDE LANGS
     public function delete_langs(){
         $lang_en_file = (new Virtualname_install)->vn_whmcs_dir.'lang/overrides/english.php';
@@ -742,10 +731,12 @@ class Virtualname_install extends Virtualname_admin{
         $vname_es_file = (new Virtualname_install)->vn_whmcs_dir.(new Virtualname_install)->vn_module_dir.'includes/overrides/spanish.php';
       	$needle = '######VIRTUALNAME REGISTRAR LANGS######';
         if(file_exists($lang_en_file)){
-        	$getContent = (new Virtualname_install)->clean_version(file_get_contents($lang_en_file), $needle);
-        	$vnameContent = (new Virtualname_install)->clean_version(file_get_contents($vname_en_file), $needle);
-        	if($getContent != $vnameContent){
-		        file_put_contents($lang_en_file, $getContent);
+        	$get_content = file_get_contents($lang_en_file);
+        	$vname_content = file_get_contents($vname_en_file);
+        	if($get_content != $vname_content){
+                $remove_content = $needle . (new Virtualname_install)->get_between($get_content, $needle, $needle) . $needle;
+                $cleared_content = str_replace($remove_content, '', $get_content);
+		        file_put_contents($lang_en_file, $cleared_content);
 	            $pos = strpos(file_get_contents($lang_en_file), $needle);
 	            if ($pos != 0 || $pos != false)
 	                $response = array('status'=>'error','error'=>'There was a problem to uninstall the module. ENGLISH.PHP lines can not be deleted.');
@@ -758,22 +749,39 @@ class Virtualname_install extends Virtualname_admin{
 		    }
         }
         if(file_exists($lang_es_file)){
-        	$getContent = file_get_contents($lang_es_file);
-        	$vnameContent = file_get_contents($vname_es_file);
-        	if($getContent != $vnameContent){
-		        file_put_contents($lang_en_file, $getContent);
-	            $pos = strpos(file_get_contents($lang_en_file), $needle);
-	            if ($pos != 0 || $pos != false)
-	                $response = array('status'=>'error','error'=>'There was a problem to uninstall the module. ENGLISH.PHP lines can not be deleted.');
-		    }
-		    else{
-				unlink ($lang_es_file);
+            $get_content = file_get_contents($lang_es_file);
+            $vname_content = file_get_contents($vname_es_file);
+            if($get_content != $vname_content){
+                $remove_content = $needle . (new Virtualname_install)->get_between($get_content, $needle, $needle) . $needle;
+                $cleared_content = str_replace($remove_content, '', $get_content);
+                file_put_contents($lang_es_file, $cleared_content);
+                $pos = strpos(file_get_contents($lang_es_file), $needle);
+                if ($pos != 0 || $pos != false)
+                    $response = array('status'=>'error','error'=>'There was a problem to uninstall the module. SPANISH.PHP lines can not be deleted.');
+            }
+            else{
+                unlink ($lang_es_file);
                 if (file_exists($lang_es_file)){
                     return array('status'=>'error','error'=>'Fail on delete LANGS files.');
                 }
-		    }
+            }
         }
         return $response;
+    }
+    //GET TEXT BETWEEN TAGS
+    function get_between($string, $start = "", $end = ""){
+        if (strpos($string, $start)) {
+            $startCharCount = strpos($string, $start) + strlen($start);
+            $firstSubStr = substr($string, $startCharCount, strlen($string));
+            $endCharCount = strpos($firstSubStr, $end);
+            if ($endCharCount == 0) {
+                $endCharCount = strlen($firstSubStr);
+            }
+            return substr($firstSubStr, 0, $endCharCount);
+        }
+        else{
+            return '';
+        }
     }
     //ADD ADITIONAL FILES
     public function add_additional_files($customadminpath){

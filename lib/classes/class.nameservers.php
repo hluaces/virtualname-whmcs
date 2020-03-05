@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.8.X
-// * @copyright Copyright (c) 2019, Virtualname
-// * @version 1.1.19
+// * WHMCS version 7.9.X
+// * @copyright Copyright (c) 2020, Virtualname
+// * @version 1.1.20
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -20,6 +20,145 @@ class Virtualname_nameservers extends Virtualname_domains{
 	        $ns[$data['setting']] = $data['value'];
 	    return $ns;
 	}
+    //CREATE RECORDS
+    public function create_zone_records($params, $domain, $recordname, $recordtype, $ttl, $prio, $content){
+        $zone_id = $this->get_domain_dns_zone($params, $domain);
+        if(!$zone_id)
+            return array('error' => 'zonenotfound');
+        else
+            return $this->create_record($params, $zone_id, $recordname, $recordtype, $ttl, $prio, $content);        
+    }
+    public function create_record($params, $zone_id, $recordname, $recordtype, $ttl, $prio, $content){
+        //INIT MODULE
+        global $vname_admin, $vname_domains;
+        virtualname_init();
+        $vname_admin->check_configuration($params);
+        $fields = array();
+        if($recordtype == 'MX')
+            $fields['json'] = json_encode(array( 'record' => array('name' => $recordname, 'type' => $recordtype, 'ttl' => $ttl, 'prio' => $prio, 'server' => $content) ));
+        else
+            $fields['json'] = json_encode(array( 'record' => array('name' => $recordname, 'type' => $recordtype, 'ttl' => $ttl, 'prio' => $prio, 'content' => $content) ));
+        $module = 'dns/zones';
+        $action = $zone_id.'/records.json';
+        $RESTful= 'POST';
+        $params['action'] = 'CreateRecord';
+        try{
+            $request = $vname_domains->api_call($params,$fields, $module, $action, $RESTful);
+        }catch (Exception $e){
+            return ($e->getMessage());
+        }
+        if($request['status']['code']< 200 || $request['status']['code'] > 299){
+            $values['error'] = $request['status']['description'];
+            if(isset($request['response']['content']))
+                $values['error'] .= ': '.implode(',', $request['response']['content']);
+        }
+        else
+            $values = true;
+        return $values; 
+    }
+    //DELETE RECORDS
+    public function delete_zone_records($params, $domain, $record_id){
+        $zone_id = $this->get_domain_dns_zone($params, $domain);
+        if(!$zone_id)
+            return array('error' => 'zonenotfound');
+        else
+            return $this->delete_record($params, $record_id, $zone_id);
+    }
+    public function delete_record($params, $record_id, $zone_id){
+        //INIT MODULE
+        global $vname_admin, $vname_domains;
+        virtualname_init();
+        $vname_admin->check_configuration($params);
+        $fields = array();
+        $module = 'dns/zones';
+        $action = $zone_id.'/records/'.$record_id.'.json';
+        $RESTful= 'DELETE';
+        $params['action'] = 'DeleteRecord';
+        try{
+            $request = $vname_domains->api_call($params,$fields, $module, $action, $RESTful);
+        }catch (Exception $e){
+            return ($e->getMessage());
+        }
+        if($request['status']['code']< 200 || $request['status']['code'] > 299){
+            $values['error'] = $request['status']['description'];
+            if(isset($request['response']['name']))
+                $values['error'] .= ': '.implode(',', $request['response']['name']);
+        }
+        else
+            $values = true;
+        return $values; 
+    }
+    //GET RECORDS
+    public function get_domain_records($params, $domain){
+        $zone_id = $this->get_domain_dns_zone($params, $domain);
+        if(!$zone_id)
+            return array('error' => 'zonenotfound');
+        else
+            return $this->get_zone_records($params, $zone_id);
+    }
+
+    public function get_domain_dns_zone($params, $domain){
+        $values = $this->get_dns_zones($params);
+        if($values && $values[$domain])
+            return $values[$domain];
+        else
+            return false;
+    }
+
+    public function get_zone_records($params, $zone_id){
+        //INIT MODULE
+        global $vname_admin, $vname_domains;
+        virtualname_init();
+        $vname_admin->check_configuration($params);
+        $fields = array();
+        $module = 'dns/zones';
+        $action = $zone_id.'/records.json';
+        $RESTful= 'GET';
+        $params['action'] = 'GetZoneRecords';
+        try{
+            $request = $vname_domains->api_call($params,$fields, $module, $action, $RESTful);
+        }catch (Exception $e){
+            return ($e->getMessage());
+        }
+        if($request['status']['code']< 200 || $request['status']['code'] > 299){
+            $values['error'] = $request['status']['description'];
+            if(isset($request['response']['name']))
+                $values['error'] .= ': '.implode(',', $request['response']['name']);
+        }
+        else{
+            foreach($request['response'] as $record){
+                $values[] = array('id'=>$record['id'], 'name'=>$record['name'], 'type' => $record['type'], 'ttl' => $record['ttl'], 'prio' => $record['prio'], 'content' => $record['content']);
+            }
+        }
+        return $values;        
+    }
+    public function get_dns_zones($params){
+        //INIT MODULE
+        global $vname_admin, $vname_domains;
+        virtualname_init();
+        $vname_admin->check_configuration($params);
+        $fields = array();
+        $module = 'dns';
+        $action = 'zones.json';
+        $RESTful= 'GET';
+        $params['action'] = 'GetDnsZones';
+        try{
+            $request = $vname_domains->api_call($params,$fields, $module, $action, $RESTful);
+        }catch (Exception $e){
+            return ($e->getMessage());
+        }
+        if($request['status']['code']< 200 || $request['status']['code'] > 299){
+            $values['error'] = $request['status']['description'];
+            if(isset($request['response']['name']))
+                $values['error'] .= ': '.implode(',', $request['response']['name']);
+        }
+        else{
+            foreach($request['response'] as $zone){
+                $values[$zone['name']] = $zone['id'];
+            }
+        }
+        return $values;        
+    }
 	public function get_domain_hosts($params, $domain_id){
 	    //INIT MODULE
 	    global $vname_admin, $vname_domains;
@@ -27,7 +166,7 @@ class Virtualname_nameservers extends Virtualname_domains{
 	    $vname_admin->check_configuration($params);
         $fields = array();
         $module = 'domains/domains';
-        $action = $domain_id.'/hosts.json?limit=2';
+        $action = $domain_id.'/hosts.json';
         $RESTful= 'GET';
         $params['action'] = 'GetDomainHosts';
         try{

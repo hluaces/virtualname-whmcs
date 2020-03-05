@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.8.X
-// * @copyright Copyright (c) 2019, Virtualname
-// * @version 1.1.19
+// * WHMCS version 7.9.X
+// * @copyright Copyright (c) 2020, Virtualname
+// * @version 1.1.20
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -78,9 +78,17 @@ elseif ($currentAction == 'contacts') {
   $clientArea->setPageTitle($whmcs->get_lang('clientareanavcontacts'));
 }
 elseif ($currentAction == 'domaincontacts') {
-  $domainId = addslashes($_GET['id']);
-  $domainId = ($domainId == '' ) ? addslashes($_GET['domainid']) : $domainId;
-  $clientArea->assign('domainId' , $domainId);
+  $domainid = addslashes($_GET['id']);
+  $domainid = ($domainid == '' ) ? addslashes($_GET['domainid']) : $domainid;
+  $clientArea->assign('domainId' , $domainid);
+  Menu::primarySidebar('domainView');
+  Menu::secondarySidebar('domainView');
+  $clientArea->setPageTitle($whmcs->get_lang('managedomain'));
+}
+elseif ($currentAction == 'domainrecords') {
+  $domainid = addslashes($_GET['id']);
+  $domainid = ($domainid == '' ) ? addslashes($_GET['domainid']) : $domainid;
+  $clientArea->assign('domainId' , $domainid);
   Menu::primarySidebar('domainView');
   Menu::secondarySidebar('domainView');
   $clientArea->setPageTitle($whmcs->get_lang('managedomain'));
@@ -107,7 +115,7 @@ if(isset($domainid) AND $domainid != 0){
 $check_tax_id_enable = virtualname_check_if_tax_id_enable();
 
 //CHECK VALIDATE CUSTOM ACTIONS
-$virtualname_posible_actions = array('details', 'contacts', 'addcontact', 'domaincontacts', 'generateContact');
+$virtualname_posible_actions = array('details', 'contacts', 'addcontact', 'domaincontacts', 'generateContact', 'domainrecords');
 if ($currentAction == '' || !in_array($currentAction, $virtualname_posible_actions)) {
   header('Location: ./clientarea.php');
 }
@@ -338,58 +346,7 @@ else {
     $smartyvalues['domainid'] = $domains->getData('id');
     $smartyvalues['domain'] = $domains->getData('domain');
     $smartyvalues['contacts'] = $client->getContactsWithAddresses();
-    add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar){
-      global $tlddata, $whmcs;
-      if (!is_null($primarySidebar->getChild('Domain Details Management'))) {
-        $child = $primarySidebar->getChild('Domain Details Management')->getChild('Overview');
-        if (is_null($child)) {
-          $domainId = addslashes($_GET['id']);
-          $domainId = ($domainId == '' ) ? addslashes($_GET['domainid']) : $domainId;
-          $primarySidebar->getChild('Domain Details Management')
-            ->addChild('Overview')
-            ->setUri('clientarea.php?action=domaindetails&id='.$domainId.'#tabOverview')
-            ->setLabel($whmcs->get_lang('overview'))
-            ->setOrder(100);
-          $primarySidebar->getChild('Domain Details Management')
-            ->addChild('Auto Renew Settings')
-            ->setUri('clientarea.php?action=domaindetails&id='.$domainId.'#tabAutorenew')
-            ->setLabel($whmcs->get_lang('domainsautorenew'))
-            ->setOrder(110);
-          $primarySidebar->getChild('Domain Details Management')
-            ->addChild('Modify Nameservers')
-            ->setUri('clientarea.php?action=domaindetails&id='.$domainId.'#tabNameservers')
-            ->setLabel($whmcs->get_lang('domainnameservers'))
-            ->setOrder(120);
-          $primarySidebar->getChild('Domain Details Management')
-            ->addChild('Registrar Lock Status')
-            ->setUri('clientarea.php?action=domaindetails&id='.$domainId.'#tabReglock')
-            ->setLabel($whmcs->get_lang('domainregistrarlock'))
-            ->setOrder(130);
-          $primarySidebar->getChild('Domain Details Management')
-            ->addChild('Addons')
-            ->setUri('clientarea.php?action=domaindetails&id='.$domainId.'#tabAddons')
-            ->setLabel($whmcs->get_lang('domainaddons'))
-            ->setOrder(140);
-          $primarySidebar->getChild('Domain Details Management')
-            ->addChild('Domain Contacts')
-            ->setUri('clientarea.php?action=domaincontacts&domainid=' . $domainId)
-            ->setLabel($whmcs->get_lang('domaincontactinfo'))
-            ->setOrder(150);
-          $primarySidebar->getChild('Domain Details Management')
-            ->addChild('Manage Private Nameservers')
-            ->setUri('clientarea.php?action=domainregisterns&domainid=' . $domainId)
-            ->setLabel($whmcs->get_lang('domainprivatenameservers'))
-            ->setOrder(160);
-          if($tlddata['eppcode'] != 0){
-            $primarySidebar->getChild('Domain Details Management')
-              ->addChild('Get EPP Code')
-              ->setUri('clientarea.php?action=domaingetepp&domainid=' . $domainId)
-              ->setLabel($whmcs->get_lang('domaingeteppcode'))
-              ->setOrder(170);
-          }
-        }
-      }
-    });
+    primary_sidebar();
   }
   elseif ($currentAction == 'addcontact') {
     checkContactPermission('contacts');
@@ -593,6 +550,64 @@ else {
     $smartyvalues['invoiceemails'] = $whmcs->get_req_var_if($e, 'invoiceemails', $contact_data);
     $smartyvalues['supportemails'] = $whmcs->get_req_var_if($e, 'supportemails', $contact_data);
   }
+  elseif ($currentAction == 'domainrecords'){
+    checkContactPermission('managedomains');
+    $config_template = virtualname_get_template_config();
+    $clientArea->setTemplate('../../modules/registrars/virtualname/includes/templates/'.$config_template.'/clientareadetailsdata');
+    $clientArea->assign('currentAction', 'domainrecords');
+    $domains  = new WHMCS\Domains();
+    $domain_data = $domains->getDomainsDatabyID($domainid);
+    // O NO TENGO PERMISOS
+    $enable_dns_management = virtualname_check_enable_dns_records_management();
+    if (!$domain_data || !$domains->isActive() || !$enable_dns_management) {
+      redir('action=domains', 'clientarea.php');
+    }
+    $clientArea->addToBreadCrumb('clientarea.php?action=domainrecords&id='.$domain_data['id'], $domain_data['domain']);
+    $clientArea->addToBreadCrumb('#', $whmcs->get_lang('domainaddonsdnsmanagement'));
+
+    if ($subAction== 'create'){
+      check_token();
+      if($_POST){
+        $recordname = $_POST['recordname'];
+        $recordtype = $_POST['recordtype'];
+        $ttl = $_POST['ttl'];
+        $prio = $_POST['prio'];
+        $content = $_POST['content'];
+        $success = virtualname_create_record($domainid, $recordname, $recordtype, $ttl, $prio, $content);
+      }
+    }
+    elseif($subAction == 'delete'){
+      check_token();
+      if($_POST && $_POST['recordid']){
+        $recordid = $_POST['recordid'];
+        $success = virtualname_delete_record($domainid, $recordid);
+      }
+    }
+
+    if($success && $success['error']){
+      $smartyvalues['successful'] = false;
+      $smartyvalues['errormessage'] = $success['error'];
+    }
+    elseif ($success && $subAction) 
+      $smartyvalues['successful'] = true;
+    else
+      $smartyvalues['successful'] = false;
+
+    $smartyvalues['domainid'] = $domains->getData('id');
+    $smartyvalues['domain'] = $domains->getData('domain');
+
+    $recordsarray = virtualname_get_domain_records($domainid);
+
+    if(!isset($recordsarray['error']))
+      $smartyvalues['records'] = $recordsarray;
+    else
+      $smartyvalues['errormessage'] = $recordsarray['error'];
+
+    $tld = $domains->getTLD();
+    $tlddata = get_query_vals("tbldomainpricing", "", array("extension" => ".".$tld));
+
+    primary_sidebar();
+  }
 }
 
 //PRINT CUSTOM PAGE
@@ -601,6 +616,38 @@ $clientArea->output();
 ############################################################
 ############CUSTOM FUNCTIONS################################
 ############################################################
+//CHECK DNS RECORDS MANAGEMENT ENABLE
+function virtualname_check_enable_dns_records_management(){
+  //INIT MODULE
+  require_once(dirname(__FILE__).'/modules/registrars/virtualname/virtualname.php');
+  global $vname_admin;
+  virtualname_init();
+  $response = $vname_admin->check_enable_dns_records_management();
+  return $response;
+}
+//CREATE RECORD
+function virtualname_create_record($domainid, $recordname, $recordtype, $ttl, $prio, $content){
+  //INIT MODULE
+  require_once(dirname(__FILE__).'/modules/registrars/virtualname/virtualname.php');
+  global $vname_nameservers, $vname_domains, $vname_admin;
+  virtualname_init();
+  $params = $vname_admin->config();
+  $domain = $vname_domains->get_whmcs_domain('', $domainid);
+  $response = $vname_nameservers->create_zone_records($params, $domain['domain'], $recordname, $recordtype, $ttl, $prio, $content);
+  return $response;
+}
+//DELETE RECORD
+function virtualname_delete_record($domainid, $recordid){
+  //INIT MODULE
+  require_once(dirname(__FILE__).'/modules/registrars/virtualname/virtualname.php');
+  global $vname_nameservers, $vname_domains, $vname_admin;
+  virtualname_init();
+  $params = $vname_admin->config();
+  $domain = $vname_domains->get_whmcs_domain('', $domainid);
+  $response = $vname_nameservers->delete_zone_records($params, $domain['domain'], $recordid);
+  return $response;
+}
+
 //GET WHMCS TEMPLATE SELECTED CONFIGURATION
 function virtualname_get_template_config(){
     $table  = 'tblregistrars';
@@ -756,6 +803,73 @@ function virtualname_check_if_tax_id_enable(){
   virtualname_init();
   $response = $vname_admin->can_be_use_customer_tax_id();
   return $response;
+}
+
+//GET RECORDS
+function virtualname_get_domain_records($domainid){
+  //INIT MODULE
+  require_once(dirname(__FILE__).'/modules/registrars/virtualname/virtualname.php');
+  global $vname_nameservers, $vname_domains, $vname_admin;
+  virtualname_init();
+  $params = $vname_admin->config();
+  $domain = $vname_domains->get_whmcs_domain('', $domainid);
+  $response = $vname_nameservers->get_domain_records($params, $domain['domain']);
+  return $response;
+}
+
+function primary_sidebar(){
+    add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar){
+    global $tlddata, $whmcs;
+    if (!is_null($primarySidebar->getChild('Domain Details Management'))) {
+      $child = $primarySidebar->getChild('Domain Details Management')->getChild('Overview');
+      if (is_null($child)) {
+        $domainid = addslashes($_GET['id']);
+        $domainid = ($domainid == '' ) ? addslashes($_GET['domainid']) : $domainid;
+        $primarySidebar->getChild('Domain Details Management')
+          ->addChild('Overview')
+          ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabOverview')
+          ->setLabel($whmcs->get_lang('overview'))
+          ->setOrder(100);
+        $primarySidebar->getChild('Domain Details Management')
+          ->addChild('Auto Renew Settings')
+          ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabAutorenew')
+          ->setLabel($whmcs->get_lang('domainsautorenew'))
+          ->setOrder(110);
+        $primarySidebar->getChild('Domain Details Management')
+          ->addChild('Modify Nameservers')
+          ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabNameservers')
+          ->setLabel($whmcs->get_lang('domainnameservers'))
+          ->setOrder(120);
+        $primarySidebar->getChild('Domain Details Management')
+          ->addChild('Registrar Lock Status')
+          ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabReglock')
+          ->setLabel($whmcs->get_lang('domainregistrarlock'))
+          ->setOrder(130);
+        $primarySidebar->getChild('Domain Details Management')
+          ->addChild('Addons')
+          ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabAddons')
+          ->setLabel($whmcs->get_lang('domainaddons'))
+          ->setOrder(140);
+        $primarySidebar->getChild('Domain Details Management')
+          ->addChild('Domain Contacts')
+          ->setUri('clientarea.php?action=domaincontacts&domainid=' . $domainid)
+          ->setLabel($whmcs->get_lang('domaincontactinfo'))
+          ->setOrder(150);
+        $primarySidebar->getChild('Domain Details Management')
+          ->addChild('Manage Private Nameservers')
+          ->setUri('clientarea.php?action=domainregisterns&domainid=' . $domainid)
+          ->setLabel($whmcs->get_lang('domainprivatenameservers'))
+          ->setOrder(160);
+        if($tlddata['eppcode'] != 0){
+          $primarySidebar->getChild('Domain Details Management')
+            ->addChild('Get EPP Code')
+            ->setUri('clientarea.php?action=domaingetepp&domainid=' . $domainid)
+            ->setLabel($whmcs->get_lang('domaingeteppcode'))
+            ->setOrder(170);
+        }
+      }
+    }
+  });
 }
 
 ?>
