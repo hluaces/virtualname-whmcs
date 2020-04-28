@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.9.X
+// * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.1.20
+// * @version 1.2.0
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -870,7 +870,7 @@ function virtualname_SyncDomain($params){
         $sql = 'UPDATE tbldomains SET expirydate = \''.$expirydate.'\'';
         //UPDATE STATUS
         $whmcs_version = $vname_admin->get_whmcs_version();
-        $whmcs_version = substr($whmcs_version, 0, 3);
+        $whmcs_version = substr($whmcs_version, 0, 4);
         $status = $domain_info['response'][0]['product_info']['product_status'];
         if($status == 'active') {
             $synclog .= ' status=active';
@@ -888,7 +888,7 @@ function virtualname_SyncDomain($params){
                 $sql .= ' AND `status` = \'Pending Transfer\'';
         }
         else{
-            if(in_array($whmcs_version, array('7.0', '7.1', '7.2', '7.3', '7.4'))){
+            if(in_array($whmcs_version, array('7.0.', '7.1.', '7.2.', '7.3.', '7.4.', '7.0', '7.1', '7.2', '7.3', '7.4'))){
                 if($status == 'expired' || $status == 'redemption') {
                     $synclog .= ' status=expired';
                     $newstatus = 'Expired';

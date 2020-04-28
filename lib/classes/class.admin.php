@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.9.X
+// * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.1.20
+// * @version 1.2.0
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -14,7 +14,7 @@
 class Virtualname_admin{
 	#CLASS CONSTANTS#
 
-	public $module_version = '1.1.20';
+	public $module_version = '1.2.0';
 	public $vn_module_dir = 'modules/registrars/virtualname/';
 	public $vn_whmcs_dir;
 	public $vn_whmcs_version = '7';

@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.9.X
+// * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.1.20
+// * @version 1.2.0
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -14,11 +14,10 @@
 
 //DEFAULT CUSTOM CONTACTS METHOD
 function setExtraAdditional($userID){
-    global $vname_admin, $vname_contacts, $vname_prices;
+    global $vname_admin, $vname_contacts, $vname_prices, $smarty;
     //EXCLUDE clientsdomains admin page to set domain contacts
-    if(basename($_SERVER['SCRIPT_NAME'],'.php') == 'clientsdomains' || !domain_contacts_check_advance_contact()){
+    if(basename($_SERVER['SCRIPT_NAME'],'.php') == 'clientsdomains' || !domain_contacts_check_advance_contact() || is_null($smarty))
         return 0;
-    }
     require_once(dirname(dirname(__FILE__)).'/virtualname.php');
     //INIT MODULE
     global $vname_admin;
@@ -36,11 +35,15 @@ function setExtraAdditional($userID){
         $contacts = $vname_contacts->get_client_contacts($userID);
     }
     else{
-        global $smarty;
         $_LANG = $smarty->get_template_vars('LANG');
-        $userID = $clientDetails['userid'];
-        $clientDetails = $smarty->get_template_vars('clientsdetails');
-        $userID = $clientDetails['userid'];
+        if(!$userID || empty($userID)){
+            if($clientDetails && $clientDetails['userid'])
+                $userID = $clientDetails['userid'];
+            else{
+                $clientDetails = $smarty->get_template_vars('clientsdetails');
+                $userID = $clientDetails['userid'];
+            }
+        }
         $contacts = $vname_contacts->get_client_contacts($userID);
     }
 
