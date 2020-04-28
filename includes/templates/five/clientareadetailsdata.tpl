@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.9.X
+// * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.1.20
+// * @version 1.2.0
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -195,6 +195,20 @@
         {/foreach}
         {/if}
 
+        {if $emailPreferencesEnabled}
+            <div class="control-group">
+                <h3>{$LANG.clientareacontactsemails}</h3>
+                <div class="controls checkbox">
+                    {foreach $emailPreferences as $emailType => $value}
+                        <label>
+                            <input type="hidden" name="email_preferences[{$emailType}]" value="0">
+                            <input type="checkbox" name="email_preferences[{$emailType}]" id="{$emailType}Emails" value="1"{if $value} checked="checked"{/if} />
+                            {lang key="emailPreferences."|cat:$emailType}
+                        </label>{if !($emailType@last)}<br />{/if}
+                    {/foreach}
+                </div>
+            </div>
+        {/if}
         </fieldset>
 
         {if $showMarketingEmailOptIn}
@@ -522,6 +536,17 @@
                     </div>
                 </div>
             </fieldset>
+            <div class="control-group">
+                <label class="control-label">{$LANG.clientareacontactsemails}</label>
+                <div class="controls checkbox">
+                    {foreach $emailPreferences as $emailType => $value}
+                        <input type="hidden" name="email_preferences[{$emailType}]" value="0">
+                        <input type="checkbox" name="{$emailType}emails" id="{$emailType}emails" value="1"{if $value} checked="checked"{/if} />
+                        {lang key="clientareacontactsemails"|cat:$emailType}
+                        </label>{if !($emailType@last)}<br />{/if}
+                    {/foreach}
+                </div>
+            </div>
             <div class="form-actions">
                 <input class="btn btn-primary" type="submit" name="submit" value="{$LANG.clientareasavechanges}" />
                 {if $contactvnamevalidation != 1}

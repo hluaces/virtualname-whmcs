@@ -2,15 +2,16 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.9.X
+// * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.1.20
+// * @version 1.2.0
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
 // * @common true
 // * File description: VIRTUALNAME DOMAIN class
 // *************************************************************************
+use PHPMailer\PHPMailer\PHPMailer;
 class Virtualname_domains extends Virtualname_api{
 	//GET AVAILABLE DOMAINS TLDs FROM TCPANEL
 	public function available_tlds($params){
@@ -1633,10 +1634,8 @@ class Virtualname_domains extends Virtualname_api{
 		//ADMIN URL
 		if ($admin_link)
 			$message .= '<p><a href=\'' . $admin_url . '\'>' . $admin_url . '</a></p>';
-		//INIT MAILER
-		if (!class_exists('PHPMailer'))
-			$whmcs->load_class('phpmailer');
-		$email = new PHPMailer();
+        
+        $email = new PHPMailer();
 		$email->From = $CONFIG['SystemEmailsFromEmail'];
 		$email->FromName = html_entity_decode($CONFIG['SystemEmailsFromName'], ENT_QUOTES);
 		$email->Subject = $subject;
