@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.9.X
+// * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.1.20
+// * @version 1.2.0
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -40,7 +40,7 @@ $paymentmethod = WHMCS\Gateways::makesafename($whmcs->get_req_var('paymentmethod
 
 //PRIMARY SIDEBARS
 $whmcs_version = virtualname_get_whmcs_version();
-if(in_array($whmcs_version, array('7.0', '7.1', '7.2', '7.3', '7.4'))){
+if(in_array($whmcs_version, array('7.0.', '7.1.', '7.2.', '7.3.', '7.4.', '7.0', '7.1', '7.2', '7.3', '7.4'))){
   $whmcs_show_marketing = false;
   Menu::addContext();
 }
@@ -199,17 +199,20 @@ else {
     $hideicnumber = virtualname_get_hide_config();
     $legal_forms  = virtualname_get_legal_forms($whmcs->get_lang('legal_form'), $legalContact);
 
+    //EMAIL PREFERENCES
+    $email_preferences = $whmcs->get_req_var_if($e, 'email_preferences', $exdetails);
+    $email_client_preferences_enable = ($CONFIG['DisableClientEmailPreferences'] == '1' ? 0 : 1);
+
     //IF 0 the user not was added in the system
-    if($identificationContact == 'EMPTY')
-      $validateTcpanel = '0';
-    else
-      $validateTcpanel = '1';
+    $validateTcpanel = ($identificationContact == 'EMPTY' ? 0 : 1);
 
     $clientArea->assign('clientidentificationnumber', $idNumber);
     $clientArea->assign('clientvirtualnamevalidation', $validateTcpanel);
     $clientArea->assign('clientlegalforms', $legal_forms);
     $clientArea->assign('hideicnumber', $hideicnumber);
     $clientArea->assign('currentAction', 'details');
+    $clientArea->assign('emailPreferences', $email_preferences);
+    $clientArea->assign('emailPreferencesEnabled', $email_client_preferences_enable);
   }
   elseif ($currentAction == 'generateContact'){
 
@@ -407,11 +410,13 @@ else {
     $smartyvalues['countriesdropdown'] = getCountriesDropDown($country);
     $smartyvalues['subaccount'] = $subaccount;
     $smartyvalues['permissions'] = $permissions;
-    $smartyvalues['generalemails'] = $generalemails;
-    $smartyvalues['productemails'] = $productemails;
-    $smartyvalues['domainemails'] = $domainemails;
-    $smartyvalues['invoiceemails'] = $invoiceemails;
-    $smartyvalues['supportemails'] = $supportemails;
+    $smartyvalues['emailPreferences'] = [
+      'general' => $generalemails,
+      'product' => $productemails,
+      'domain' => $domainemails,
+      'invoice' => $invoiceemails,
+      'support' => $supportemails
+    ]; 
     $smartyvalues['hideicnumber'] = $hideicnumber;
     $smartyvalues['legalforms'] = $legal_forms;
   }
@@ -535,6 +540,9 @@ else {
     else
       $validateTcpanel = '1';
 
+    #var_dump($contact_data);exit();
+
+
     $hideicnumber = virtualname_get_hide_config();
     $legal_forms  = virtualname_get_legal_forms($whmcs->get_lang('legal_form'), $legalContact);
     $smartyvalues['hideicnumber'] = $hideicnumber;
@@ -544,11 +552,13 @@ else {
     $smartyvalues['legalforms'] = $legal_forms;
     $smartyvalues['subaccount'] = $whmcs->get_req_var_if($e, 'subaccount', $contact_data);
     $smartyvalues['permissions'] = $whmcs->get_req_var_if($e, 'permissions', $contact_data);
-    $smartyvalues['generalemails'] = $whmcs->get_req_var_if($e, 'generalemails', $contact_data);
-    $smartyvalues['productemails'] = $whmcs->get_req_var_if($e, 'productemails', $contact_data);
-    $smartyvalues['domainemails'] = $whmcs->get_req_var_if($e, 'domainemails', $contact_data);
-    $smartyvalues['invoiceemails'] = $whmcs->get_req_var_if($e, 'invoiceemails', $contact_data);
-    $smartyvalues['supportemails'] = $whmcs->get_req_var_if($e, 'supportemails', $contact_data);
+    $smartyvalues['emailPreferences'] = [
+      'general' => $whmcs->get_req_var_if($e, 'generalemails', $contact_data),
+      'product' => $whmcs->get_req_var_if($e, 'productemails', $contact_data),
+      'domain' => $whmcs->get_req_var_if($e, 'domainemails', $contact_data),
+      'invoice' => $whmcs->get_req_var_if($e, 'invoiceemails', $contact_data),
+      'support' => $whmcs->get_req_var_if($e, 'supportemails', $contact_data)
+    ];
   }
   elseif ($currentAction == 'domainrecords'){
     checkContactPermission('managedomains');
@@ -793,7 +803,7 @@ function virtualname_get_whmcs_version(){
   global $vname_admin;
   virtualname_init();
   $response = $vname_admin->get_whmcs_version();
-  return substr($response, 0, 3);
+  return substr($response, 0, 4);
 }
 
 function virtualname_check_if_tax_id_enable(){

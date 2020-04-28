@@ -1,9 +1,9 @@
 <!--// *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.9.X
+// * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.1.20
+// * @version 1.2.0
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -158,6 +158,20 @@
                                 </div>
                             </div>
                         {/foreach}
+                    {/if}
+                    {if $emailPreferencesEnabled}
+                        <div class="form-group">
+                            <h3>{$LANG.clientareacontactsemails}</h3>
+                            <div class="controls checkbox">
+                                {foreach $emailPreferences as $emailType => $value}
+                                    <label>
+                                        <input type="hidden" name="email_preferences[{$emailType}]" value="0">
+                                        <input type="checkbox" name="email_preferences[{$emailType}]" id="{$emailType}Emails" value="1"{if $value} checked="checked"{/if} />
+                                        {lang key="emailPreferences."|cat:$emailType}
+                                    </label>{if !($emailType@last)}<br />{/if}
+                                {/foreach}
+                            </div>
+                        </div>
                     {/if}
                 </div>
             </div>
@@ -445,33 +459,22 @@
                                 </div>
                             </div>
                         </div>
+                        {if $hasLinkedProvidersEnabled}
+                            <h3>Linked Accounts</h3>
+                            {include file="$template/includes/linkedaccounts.tpl" linkContext="linktable" }
+                        {/if}
                     </fieldset>
 
                 </div>
-
                 <div class="form-group">
                     <label class="control-label">{$LANG.clientareacontactsemails}</label>
                     <div class="controls checkbox">
-                        <label>
-                            <input type="checkbox" name="generalemails" id="generalemails" value="1"{if $generalemails} checked{/if} />
-                            {$LANG.clientareacontactsemailsgeneral}
-                        </label><br />
-                        <label>
-                            <input type="checkbox" name="productemails" id="productemails" value="1"{if $productemails} checked{/if} />
-                            {$LANG.clientareacontactsemailsproduct}
-                        </label><br />
-                        <label>
-                            <input type="checkbox" name="domainemails" id="domainemails" value="1"{if $domainemails} checked{/if} />
-                            {$LANG.clientareacontactsemailsdomain}
-                        </label><br />
-                        <label>
-                            <input type="checkbox" name="invoiceemails" id="invoiceemails" value="1"{if $invoiceemails} checked{/if} />
-                            {$LANG.clientareacontactsemailsinvoice}
-                        </label><br />
-                        <label>
-                            <input type="checkbox" name="supportemails" id="supportemails" value="1"{if $supportemails} checked{/if} />
-                            {$LANG.clientareacontactsemailssupport}
-                        </label>
+                        {foreach $emailPreferences as $emailType => $value}
+                            <input type="hidden" name="email_preferences[{$emailType}]" value="0">
+                            <input type="checkbox" name="{$emailType}emails" id="{$emailType}emails" value="1"{if $value} checked="checked"{/if} />
+                            {lang key="clientareacontactsemails"|cat:$emailType}
+                            </label>{if !($emailType@last)}<br />{/if}
+                        {/foreach}
                     </div>
                 </div>
                 <div class="form-group text-center">
@@ -652,30 +655,12 @@
             <div class="form-group">
                 <label class="control-label">{$LANG.clientareacontactsemails}</label>
                 <div class="controls checkbox">
-                    <label>
-                        <input type="checkbox" name="generalemails" id="generalemails" value="1"{if $generalemails} checked{/if} />
-                        {$LANG.clientareacontactsemailsgeneral}
-                    </label>
-                    <br />
-                    <label>
-                        <input type="checkbox" name="productemails" id="productemails" value="1"{if $productemails} checked{/if} />
-                        {$LANG.clientareacontactsemailsproduct}
-                    </label>
-                    <br />
-                    <label>
-                        <input type="checkbox" name="domainemails" id="domainemails" value="1"{if $domainemails} checked{/if} />
-                        {$LANG.clientareacontactsemailsdomain}
-                    </label>
-                    <br />
-                    <label>
-                        <input type="checkbox" name="invoiceemails" id="invoiceemails" value="1"{if $invoiceemails} checked{/if} />
-                        {$LANG.clientareacontactsemailsinvoice}
-                    </label>
-                    <br />
-                    <label>
-                        <input type="checkbox" name="supportemails" id="supportemails" value="1"{if $supportemails} checked{/if} />
-                        {$LANG.clientareacontactsemailssupport}
-                    </label>
+                    {foreach $emailPreferences as $emailType => $value}
+                        <input type="hidden" name="email_preferences[{$emailType}]" value="0">
+                        <input type="checkbox" name="{$emailType}emails" id="{$emailType}emails" value="1"{if $value} checked="checked"{/if} />
+                        {lang key="clientareacontactsemails"|cat:$emailType}
+                        </label>{if !($emailType@last)}<br />{/if}
+                    {/foreach}
                 </div>
             </div>
 
