@@ -888,7 +888,7 @@ function virtualname_SyncDomain($params){
                 $sql .= ' AND `status` = \'Pending Transfer\'';
         }
         else{
-            if(in_array($whmcs_version, array('7.0.', '7.1.', '7.2.', '7.3.', '7.4.', '7.0', '7.1', '7.2', '7.3', '7.4'))){
+            if(in_array($whmcs_version, array('7.0.', '7.1.', '7.2.', '7.3.', '7.4.', '7.0', '7.1', '7.2', '7.3', '7.4'), true)) {
                 if($status == 'expired' || $status == 'redemption') {
                     $synclog .= ' status=expired';
                     $newstatus = 'Expired';

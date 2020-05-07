@@ -40,7 +40,7 @@ $paymentmethod = WHMCS\Gateways::makesafename($whmcs->get_req_var('paymentmethod
 
 //PRIMARY SIDEBARS
 $whmcs_version = virtualname_get_whmcs_version();
-if(in_array($whmcs_version, array('7.0.', '7.1.', '7.2.', '7.3.', '7.4.', '7.0', '7.1', '7.2', '7.3', '7.4'))){
+if(in_array($whmcs_version, array('7.0.', '7.1.', '7.2.', '7.3.', '7.4.', '7.0', '7.1', '7.2', '7.3', '7.4'), true)) {
   $whmcs_show_marketing = false;
   Menu::addContext();
 }
@@ -416,7 +416,7 @@ else {
       'domain' => $domainemails,
       'invoice' => $invoiceemails,
       'support' => $supportemails
-    ]; 
+    ];
     $smartyvalues['hideicnumber'] = $hideicnumber;
     $smartyvalues['legalforms'] = $legal_forms;
   }
@@ -598,7 +598,7 @@ else {
       $smartyvalues['successful'] = false;
       $smartyvalues['errormessage'] = $success['error'];
     }
-    elseif ($success && $subAction) 
+    elseif ($success && $subAction)
       $smartyvalues['successful'] = true;
     else
       $smartyvalues['successful'] = false;
