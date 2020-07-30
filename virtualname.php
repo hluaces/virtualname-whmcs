@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.0
+// * @version 1.2.3
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -888,39 +888,25 @@ function virtualname_SyncDomain($params){
                 $sql .= ' AND `status` = \'Pending Transfer\'';
         }
         else{
-            if(in_array($whmcs_version, array('7.0.', '7.1.', '7.2.', '7.3.', '7.4.', '7.0', '7.1', '7.2', '7.3', '7.4'), true)) {
-                if($status == 'expired' || $status == 'redemption') {
-                    $synclog .= ' status=expired';
-                    $newstatus = 'Expired';
-                    $sql .= ', `status` = \'Expired\'';
-                }
-                elseif($status == 'cancelled' || $status == 'outbound_transfer' || $status == 'inactive') {
-                    $synclog .= ' status=cancelled';
-                    $newstatus = 'Cancelled';
-                    $sql .= ', `status` = \'Cancelled\'';
-                }
+            if($status == 'expired') {
+                $synclog .= ' status=expired';
+                $newstatus = 'Expired';
+                $sql .= ', `status` = \'Expired\'';
             }
-            else{
-                if($status == 'expired') {
-                    $synclog .= ' status=expired';
-                    $newstatus = 'Expired';
-                    $sql .= ', `status` = \'Expired\'';
-                }
-                elseif($status == 'redemption') {
-                    $synclog .= ' status=redemption';
-                    $newstatus = 'Redemption';
-                    $sql .= ', `status` = \'Redemption\'';
-                }
-                elseif($status == 'cancelled' || $status == 'inactive') {
-                    $synclog .= ' status=cancelled';
-                    $newstatus = 'Cancelled';
-                    $sql .= ', `status` = \'Cancelled\'';
-                }
-                elseif($status == 'outbound_transfer') {
-                    $synclog .= ' status=transferredaway';
-                    $newstatus = 'Transferred Away';
-                    $sql .= ', `status` = \'Transferred Away\'';
-                }
+            elseif($status == 'redemption') {
+                $synclog .= ' status=redemption';
+                $newstatus = 'Redemption';
+                $sql .= ', `status` = \'Redemption\'';
+            }
+            elseif($status == 'cancelled' || $status == 'inactive') {
+                $synclog .= ' status=cancelled';
+                $newstatus = 'Cancelled';
+                $sql .= ', `status` = \'Cancelled\'';
+            }
+            elseif($status == 'outbound_transfer') {
+                $synclog .= ' status=transferredaway';
+                $newstatus = 'Transferred Away';
+                $sql .= ', `status` = \'Transferred Away\'';
             }
         }
         //UPDATE DOMAIN PRIVACY

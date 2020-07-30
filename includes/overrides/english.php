@@ -9,7 +9,7 @@ if (!defined('WHMCS')) die('This file cannot be accessed directly');
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.0
+// * @version 1.2.3
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
