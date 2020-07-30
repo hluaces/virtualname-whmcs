@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.0
+// * @version 1.2.1
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -40,14 +40,8 @@ $paymentmethod = WHMCS\Gateways::makesafename($whmcs->get_req_var('paymentmethod
 
 //PRIMARY SIDEBARS
 $whmcs_version = virtualname_get_whmcs_version();
-if(in_array($whmcs_version, array('7.0.', '7.1.', '7.2.', '7.3.', '7.4.', '7.0', '7.1', '7.2', '7.3', '7.4'))){
-  $whmcs_show_marketing = false;
-  Menu::addContext();
-}
-else{
-  $whmcs_show_marketing = true;
-  Menu::addContext('clientView', null);
-}
+$whmcs_show_marketing = true;
+Menu::addContext('clientView', null);
 
 //SET ACTIONS
 if ($currentAction == 'changesq')
