@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.1
+// * @version 1.2.2
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -1426,8 +1426,13 @@ class Virtualname_domains extends Virtualname_api{
             $values= array('value'  => json_encode($list), 'config' => 'syncList'.$offset, 'type' => 'synclist');
             insert_query($virtualname_table_sync,$values);
 			$split_header = preg_split('~[\r\n]+~', $response['headers'][0]);
-			$total_count = explode('X-Total-Count: ', $split_header[12]);
-            $res = array('total_count' => $total_count[1]);
+			$response_headers = [];
+			foreach($split_header as $header){
+				$explode_header = explode(': ', $header);
+				if(count($explode_header) == 2)
+					$response_headers[$explode_header[0]] = $explode_header[1]; 
+			}
+            $res = array('total_count' => $response_headers['X-Total-Count']);
         }
         return $res;
     }
