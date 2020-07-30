@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.2
+// * @version 1.2.3
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -72,16 +72,14 @@ elseif ($currentAction == 'contacts') {
   $clientArea->setPageTitle($whmcs->get_lang('clientareanavcontacts'));
 }
 elseif ($currentAction == 'domaincontacts') {
-  $domainid = addslashes($_GET['id']);
-  $domainid = ($domainid == '' ) ? addslashes($_GET['domainid']) : $domainid;
+  $domainid = virtualname_get_domain_id();
   $clientArea->assign('domainId' , $domainid);
   Menu::primarySidebar('domainView');
   Menu::secondarySidebar('domainView');
   $clientArea->setPageTitle($whmcs->get_lang('managedomain'));
 }
 elseif ($currentAction == 'domainrecords') {
-  $domainid = addslashes($_GET['id']);
-  $domainid = ($domainid == '' ) ? addslashes($_GET['domainid']) : $domainid;
+  $domainid = virtualname_get_domain_id();
   $clientArea->assign('domainId' , $domainid);
   Menu::primarySidebar('domainView');
   Menu::secondarySidebar('domainView');
@@ -284,13 +282,14 @@ else {
     $smartyvalues['contacts'] = $contactsarray;
     $domains  = new WHMCS\Domains();
     $domain_data = $domains->getDomainsDatabyID($domainid);
+
     if ((!$domain_data || !$domains->isActive()) || !$domains->hasFunction('GetContactDetails')) {
       redir('action=domains', 'clientarea.php');
     }
     $clientArea->addToBreadCrumb('clientarea.php?action=domaindetails&id='.$domain_data['id'], $domain_data['domain']);
     $clientArea->addToBreadCrumb('#', $whmcs->get_lang('domaincontactinfo'));
 
-    if ($subAction== 'save') {
+    if ($subAction == 'save') {    
       check_token();
       $vn_contact = $whmcs->get_req_var('wc');
       $contactdetails = $whmcs->get_req_var('contactdetails');
@@ -533,9 +532,6 @@ else {
       $validateTcpanel = '0';
     else
       $validateTcpanel = '1';
-
-    #var_dump($contact_data);exit();
-
 
     $hideicnumber = virtualname_get_hide_config();
     $legal_forms  = virtualname_get_legal_forms($whmcs->get_lang('legal_form'), $legalContact);
@@ -821,14 +817,26 @@ function virtualname_get_domain_records($domainid){
   return $response;
 }
 
+//GET DOMAINID
+function virtualname_get_domain_id(){
+  if($_GET && $_GET['id'])
+    $domain_id = addslashes($_GET['id']);
+  elseif($_GET && $_GET['domainid'])
+    $domain_id = addslashes($_GET['domainid']);
+  elseif($_POST && $_POST['domainid'])
+    $domain_id = addslashes($_POST['domainid']);
+  else
+    $domain_id = '';
+  return $domain_id;
+}
+
 function primary_sidebar(){
     add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar){
     global $tlddata, $whmcs;
     if (!is_null($primarySidebar->getChild('Domain Details Management'))) {
       $child = $primarySidebar->getChild('Domain Details Management')->getChild('Overview');
       if (is_null($child)) {
-        $domainid = addslashes($_GET['id']);
-        $domainid = ($domainid == '' ) ? addslashes($_GET['domainid']) : $domainid;
+        $domainid = virtualname_get_domain_id();
         $primarySidebar->getChild('Domain Details Management')
           ->addChild('Overview')
           ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabOverview')
