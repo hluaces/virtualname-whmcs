@@ -3,7 +3,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -930,6 +930,115 @@
 
     {else}
         {include file="$template/includes/alert.tpl" type="info" msg="{$LANG.records.notfound}"}
+    {/if}
+
+{/if}
+
+{if $currentAction == 'domainlifecycle'}
+
+    {literal}
+    <script language="javascript">
+    $('#Primary_Sidebar-Domain_Details_Management-Domains_Lifecycle').addClass('active');
+    </script>
+    {/literal}
+
+    {if $errormessage}
+        {include file="$template/includes/alert.tpl" type="error" errorshtml=$errormessage}
+    {/if}
+
+
+    <h3>{$LANG.domainlifecycle}</h3>
+
+    {if $lifecycle}
+
+        <link rel="stylesheet" type="text/css" href="modules/registrars/virtualname/themes/css/virtualname.css" />
+
+        <ul class="virtualname_tl">
+            {if $lifecycle.registration_date}
+                <li>
+                    <div class="virtualname_tl-badge success">{$lifecycle.registration_date|date_format:"%Y"}</div>
+                    <div class="virtualname_tl-panel">
+                        <div class="virtualname_tl-heading">
+                            <h4 class="virtualname_tl-title">{$LANG.domainregistrationdate}</h4>
+                        </div>
+                        <div class="virtualname_tl-body">
+                            <p>{$lifecycle.registration_date|date_format:"%d/%m/%Y"}</p>
+                        </div>
+                    </div>
+                </li>
+            {/if}
+            {if $lifecycle.renew_dates}
+                {foreach from=$lifecycle.renew_dates item=renew}
+                    <li class="virtualname_tl-inverted">
+                        <div class="virtualname_tl-badge info">{$renew.date|date_format:"%Y"}</div>
+                        <div class="virtualname_tl-panel">
+                            <div class="virtualname_tl-heading">
+                                <h4 class="virtualname_tl-title">{$LANG.domainrenewdate}</h4>
+                            </div>
+                            <div class="virtualname_tl-body">
+                                <p>{$renew.date|date_format:"%d/%m/%Y"}</p>
+                            </div>
+                        </div>
+                    </li>
+                {/foreach}
+            {/if}
+            {if $lifecycle.expiration_date}
+                <li>
+                    <div class="virtualname_tl-badge warning">{$lifecycle.expiration_date|date_format:"%Y"}</div>
+                    <div class="virtualname_tl-panel">
+                        <div class="virtualname_tl-heading">
+                            <h4 class="virtualname_tl-title">{$LANG.domainexpirationdate}</h4>
+                        </div>
+                        <div class="virtualname_tl-body">
+                            <p>{$lifecycle.expiration_date|date_format:"%d/%m/%Y"}</p>
+                        </div>
+                    </div>
+                </li>
+            {/if}
+            {if $lifecycle.redemption_period_date}
+                <li class="virtualname_tl-inverted">
+                    <div class="virtualname_tl-badge primary">{$lifecycle.redemption_period_date|date_format:"%Y"}</div>
+                    <div class="virtualname_tl-panel">
+                        <div class="virtualname_tl-heading">
+                            <h4 class="virtualname_tl-title">{$LANG.domainredemptionperiod}</h4>
+                        </div>
+                        <div class="virtualname_tl-body">
+                            <p>{$lifecycle.redemption_period_date|date_format:"%d/%m/%Y"}</p>
+                        </div>
+                    </div>
+                </li>
+            {/if}
+            {if $lifecycle.deletion_period_date}
+                <li>
+                    <div class="virtualname_tl-badge danger">{$lifecycle.deletion_period_date|date_format:"%Y"}</div>
+                    <div class="virtualname_tl-panel">
+                        <div class="virtualname_tl-heading">
+                            <h4 class="virtualname_tl-title">{$LANG.domaindeletionperiod}</h4>
+                        </div>
+                        <div class="virtualname_tl-body">
+                            <p>{$lifecycle.deletion_period_date|date_format:"%d/%m/%Y"}</p>
+                        </div>
+                    </div>
+                </li>
+            {/if}
+            {if $lifecycle.release_date}
+                <li class="virtualname_tl-inverted">
+                    <div class="virtualname_tl-badge">{$lifecycle.release_date|date_format:"%Y"}</div>
+                    <div class="virtualname_tl-panel">
+                        <div class="virtualname_tl-heading">
+                            <h4 class="virtualname_tl-title">{$LANG.domainreleasedate}</h4>
+                        </div>
+                        <div class="virtualname_tl-body">
+                            <p>{$lifecycle.release_date|date_format:"%d/%m/%Y"}</p>
+                        </div>
+                    </div>
+                </li>
+            {/if}
+        </ul>
+
+
+    {else}
+        {include file="$template/includes/alert.tpl" type="info" msg="{$LANG.virtualname.empty}"}
     {/if}
 
 {/if}

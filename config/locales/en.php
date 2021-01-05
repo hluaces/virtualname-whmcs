@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -219,6 +219,8 @@
     $langs_vn['disableContactVerification'] = 'Disables verification of contact and customer data if they are not linked';
     $langs_vn['enableDomainRecordsField'] = 'Enable DNS records';
     $langs_vn['enableDomainRecords'] = 'Enable DNS records management';
+    $langs_vn['enableDomainLifecycleField'] = 'Lifecycle';
+    $langs_vn['enableDomainLifecycle'] = 'Show domain lifecycle in client view';
     $langs_vn['error_fields']['phone'] = 'Phone';
     $langs_vn['error_fields']['state'] = 'State';
     $langs_vn['error_fields']['name'] = 'Nombre';
@@ -233,4 +235,13 @@
     $langs_vn['error_fields']['zipcode'] = 'Zipcode';
     $langs_vn['error_fields']['phonecc'] = 'Phone code';
     $langs_vn['error']['field'] = 'Field';
+    $langs_vn['sync_domain'] = 'Sync domain';
+    $langs_vn['resend_irtp'] = 'Resend IRTP verification';
+    $langs_vn['success_resend_irtp'] = 'Requested IRTP verification email';
+    $langs_vn['error_resend_irtp'] = 'Verification mail can only be forwarded on domains in IRTP status';
+    $langs_vn['lifecycle'] = 'Lifecycle';
+    $langs_vn['renew_date'] = 'Renew date';
+    $langs_vn['deletion_period_date'] = 'Deletion period';
+    $langs_vn['release_date'] = 'Release date';
+    $langs_vn['dns_records'] = 'DNS records';
 ?>

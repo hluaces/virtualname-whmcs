@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -32,34 +32,68 @@ add_hook('DomainEdit', 1, 'hook_domain_save');
 add_hook('PreRegistrarRenewDomain', 1, 'hook_transfer_on_renewal');
 add_hook('AfterShoppingCartCheckout', 1, 'hook_admin_set_transfer_order');
 add_hook('ClientAreaFooterOutput', 1,  'hook_client_gluerecords');
-add_hook('ClientAreaPrimarySidebar', 1, 'hook_add_menu_dns_records');
+add_hook('ClientAreaPrimarySidebar', 1, 'hook_add_menu_buttons');
+add_hook('ClientAreaPrimarySidebar', 1, 'hook_remove_menu_block_domains');
 
 ############################################################
 ############HOOK FUNCTIONS##################################
 ############################################################
-
-// ADD MENU ITEM NEW
-function hook_add_menu_dns_records($primarySidebar){
-    $version_popup = '';
+// REMOVE MENU ITEM
+function hook_remove_menu_block_domains($primarySidebar){
+    if($_GET['domainid'])
+        $domainid = $_GET['domainid'];
+    elseif($_GET['id'])
+        $domainid = $_GET['id'];
+    else
+        return false;
     require_once(dirname(dirname(__FILE__)).'/../modules/registrars/virtualname/virtualname.php');
     //INIT MODULE
-    global $vname_admin;
+    global $vname_domains, $tlddata;
+    virtualname_init();
+    $domain = $vname_domains->get_whmcs_domain('', $domainid);
+    $dom_tld = explode(".", $domain['domain'], 2);
+    $enable_lock = $vname_domains->tld_check_enable_lock($dom_tld[1]);
+    if (!$enable_lock && !is_null($primarySidebar->getChild('Domain Details Management'))) {
+       $primarySidebar->getChild('Domain Details Management')->removeChild('Registrar Lock Status');
+    }
+}
+// ADD MENU ITEM NEW
+function hook_add_menu_buttons($primarySidebar){
+    if(isset($_GET) && isset($_GET['action']) && in_array($_GET['action'],['domaindetails','domaincontacts','domainregisterns','domaingetepp','domainrecords','domainlifecycle'])){
+        if($_GET['domainid'])
+            $domainid = $_GET['domainid'];
+        elseif($_GET['id'])
+            $domainid = $_GET['id'];
+        else
+            return false;
+    }
+    require_once(dirname(dirname(__FILE__)).'/../modules/registrars/virtualname/virtualname.php');
+    //INIT MODULE
+    global $vname_admin, $vname_domains;
     virtualname_init();
     $params = $vname_admin->config();
+    $adminID = $_SESSION['adminid'];
+    $langs = $vname_domains->get_config_lang($adminID);
+    $domain = $vname_domains->get_whmcs_domain('', $domainid);
+    $dom_tld = explode(".", $domain['domain'], 2);
+    $available_tld_lifecycle = ['com', 'net', 'org', 'info', 'biz', 'es', 'com.es', 'edu.es', 'org.es'];
     if($params['enableDomainRecords'] && $params['enableDomainRecords'] == 'on'){
-        if(isset($_GET) && isset($_GET['action']) && in_array($_GET['action'],['domaindetails','domaincontacts','domainregisterns','domaingetepp','domainrecords'])){
-            if($_GET['domainid'])
-                $domainid = $_GET['domainid'];
-            elseif($_GET['id'])
-                $domainid = $_GET['id'];
-            else
-                return false;
+        if (!is_null($primarySidebar->getChild('Domain Details Management'))) {
+           $primarySidebar->getChild('Domain Details Management')
+           ->addChild('Domains DNS Records', array('disabled'=> $domain['status'] != 'Active'))
+           ->setLabel($langs['dns_records'])
+           ->setUri('clientareadata.php?action=domainrecords&domainid='.$domainid)
+           ->setOrder(1000);
+        }
+    }
+    if($params['enableDomainLifecycle'] && $params['enableDomainLifecycle'] == 'on'){
+        if(in_array($dom_tld[1], $available_tld_lifecycle)){
             if (!is_null($primarySidebar->getChild('Domain Details Management'))) {
                $primarySidebar->getChild('Domain Details Management')
-               ->addChild('Domains DNS Records')
-               ->setLabel('Zonas DNS')
-               ->setUri('clientareadata.php?action=domainrecords&domainid='.$domainid)
-               ->setOrder(1000);
+               ->addChild('Domains Lifecycle', array('disabled'=> $domain['status'] != 'Active'))
+               ->setLabel($langs['lifecycle'])
+               ->setUri('clientareadata.php?action=domainlifecycle&domainid='.$domainid)
+               ->setOrder(1100);
             }
         }
     }
@@ -383,9 +417,30 @@ function hook_domain_data($vars){
             $domain_data .= $langs['adm_handle'].': <label class=\'label cancelled inactive label_extra\'>'.$info['adm_id'].'</label> ';
             $domain_data .= $langs['bill_handle'].': <label class=\'label cancelled inactive label_extra\'>'.$info['bill_id'].'</label> ';
             $domain_data .= $langs['tech_handle'].': <label class=\'label cancelled inactive label_extra\'>'.$info['tech_id'].'</label>';
-            return array(
+            $lifecycle = $vname_domains->view_domain_lifecycle($info['domain_id']);
+            $lifecycle_data = '';
+            if($lifecycle){
+                if($lifecycle['registration_date'])
+                    $lifecycle_data .= '<label class=\'label active label_extra\'>'.$langs['crea_date'].'</label> => <label class=\'label cancelled inactive label_extra\'>' . date( "Y-m-d", strtotime($lifecycle['registration_date'])) . '</label></br>';
+                if($lifecycle['renew_dates']){
+                    foreach($lifecycle['renew_dates'] as $renew)
+                        $lifecycle_data .= '<label class=\'label completed label_extra\'>'.$langs['renew_date'].'</label> => <label class=\'label cancelled inactive label_extra\'>' . date( "Y-m-d", strtotime($renew['date'])) . '</label></br>';
+                }
+                if($lifecycle['expiration_date'])
+                    $lifecycle_data .= '<label class=\'label pending label_extra\'>'.$langs['exp_date'].'</label> => <label class=\'label cancelled inactive label_extra\'>' . date( "Y-m-d", strtotime($lifecycle['expiration_date'])) . '</label></br>';
+                if($lifecycle['redemption_period_date'])
+                    $lifecycle_data .= '<label class=\'label suspended label_extra\'>'.$langs['redemption'].'</label> => <label class=\'label cancelled inactive label_extra\'>' . date( "Y-m-d", strtotime($lifecycle['redemption_period_date'])) . '</label></br>';
+                if($lifecycle['deletion_period_date'])
+                    $lifecycle_data .= '<label class=\'label terminated label_extra\'>'.$langs['deletion_period_date'].'</label> => <label class=\'label cancelled inactive label_extra\'>' . date( "Y-m-d", strtotime($lifecycle['deletion_period_date'])) . '</label></br>';
+                if($lifecycle['release_date'])
+                    $lifecycle_data .= '<label class=\'label fraud label_extra\'>'.$langs['release_date'].'</label> => <label class=\'label cancelled inactive label_extra\'>' . date( "Y-m-d", strtotime($lifecycle['release_date'])) . '</label>';
+            }
+            $response = array(
                 '<b>'.$langs['domain_data'].'</b>' => $domain_data
             );
+            if(!empty($lifecycle_data))
+                $response['<b>'.$langs['lifecycle'].'</b>'] = $lifecycle_data;
+            return $response;
         }
     }
     else{

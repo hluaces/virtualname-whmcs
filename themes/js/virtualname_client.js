@@ -3,7 +3,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -34,6 +34,10 @@ function update_urls(){
         }
         if (filename == 'clientareadata.php?action=changepw'){
             links[l].href = './clientarea.php?action=changepw';
+        }
+        if (filename.indexOf('clientarea.php?action=contacts&id=')>=0){
+            var resLink = urlData.replace('clientarea', 'clientareadata');
+            links[l].href = resLink;
         }
         if (filename.indexOf('clientsdomaincontacts.php?domainid=')>=0){
             var resLink = urlData.replace('clientsdomaincontacts', 'clientsdatadomaincontacts');

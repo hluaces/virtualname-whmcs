@@ -9,7 +9,7 @@ if (!defined('WHMCS')) die('This file cannot be accessed directly');
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -90,8 +90,16 @@ $_LANG['delete_glue_records'] = 'Can\'t delete nameserver';
 $_LANG['virtualname']['name'] = 'Name';
 $_LANG['virtualname']['content'] = 'Content';
 $_LANG['virtualname']['delete'] = 'Delete';
+$_LANG['virtualname']['empty'] = 'No information available';
 $_LANG['records']['description'] = 'DNS Records creation and management (Records: SOA, MX, A, AAAA, CNAME...).';
 $_LANG['records']['create'] = 'Create record';
 $_LANG['records']['notfound'] = 'This domain not have records.';
 $_LANG['zone']['notfound'] = 'This domain not have DNS Zone. Please contact with your administrator to create it.';
+$_LANG['domainlifecycle'] = 'Lifecycle';
+$_LANG['domainrenewdate'] = 'Renew Date';
+$_LANG['domainregistrationdate'] = 'Registration Date';
+$_LANG['domainexpirationdate'] = 'Expiration Date';
+$_LANG['domaindeletionperiod'] = 'Deletion Period';
+$_LANG['domainredemptionperiod'] = 'Redemption Period';
+$_LANG['domainreleasedate'] = 'Release Date';
 ######VIRTUALNAME REGISTRAR LANGS######

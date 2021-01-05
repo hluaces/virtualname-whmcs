@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -67,6 +67,7 @@ function virtualname_getConfigArray(){
         'validationNewClient'       => array('Type' => 'yesno',     'Description' => $configLang['validationNewClient'], 'FriendlyName' => $configLang['validationNewClientField']),
         'disableContactVerification'=> array('Type' => 'yesno',     'Description' => $configLang['disableContactVerification'], 'FriendlyName' => $configLang['disableContactVerificationField']),
         'enableDomainRecords'       => array('Type' => 'yesno',     'Description' => $configLang['enableDomainRecords'], 'FriendlyName' => $configLang['enableDomainRecordsField']),
+        'enableDomainLifecycle'       => array('Type' => 'yesno',     'Description' => $configLang['enableDomainLifecycle'], 'FriendlyName' => $configLang['enableDomainLifecycleField']),
         'devMode'                   => array('Type' => 'yesno',     'Description' => $configLang['devMode'], 'FriendlyName' => $configLang['devModeField']),
         'debug'                     => array('Type' => 'yesno',     'Description' => $configLang['debug'], 'FriendlyName' => $configLang['debugField']),
     ));
@@ -84,7 +85,14 @@ function virtualname_getConfigArray(){
 
 //ADMINISTRATION BUTTONS *DEBUG
 function virtualname_AdminCustomButtonArray(){
-    $buttonarray = array('Sync Domain' => 'SyncDomain');
+    global $vname_admin;
+    virtualname_init();
+    $adminID = $_SESSION['adminid'];
+    $configLang = $vname_admin->get_config_lang($adminID);
+    $buttonarray = array(
+        $configLang['sync_domain'] => 'SyncDomain',
+        $configLang['resend_irtp'] => 'ResendIRTP'
+    );
     return $buttonarray;
 }
 
@@ -416,10 +424,8 @@ function virtualname_SaveRegistrarLock($params){
     $config     = $vname_admin->config();
     $adminID    = $_SESSION['adminid'];
     $configLang = $vname_admin->get_config_lang($adminID);
-    $disabled_lock_TLD = explode(' ', $config['disablelocktlds']);
-    if(in_array($params['tld'], $disabled_lock_TLD)){
+    if(!$vname_domains->tld_check_enable_lock($params['tld']))
         return array('error'=>$configLang['disableLockError']);
-    }
     $vname_admin->check_configuration($params);
     $lockstatus = virtualname_GetRegistrarLock($params);
     if($lockstatus == 'locked')
@@ -835,6 +841,52 @@ function virtualname_SaveContactDetails($params){
 #############################################
 ###ADMIN PANEL FUNCTIONS ####################
 #############################################
+
+//RESEND IRTP VERIFICATION
+function virtualname_ResendIRTP($params){
+    //INIT MODULE
+    global $vname_admin, $vname_domains, $vname_nameservers, $vname_contacts;
+    virtualname_init();
+    $config     = $vname_admin->config();
+    $adminID    = $_SESSION['adminid'];
+    $configLang = $vname_admin->get_config_lang($adminID);
+    $vname_admin->check_configuration($params);
+    if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
+    if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
+    if(!class_exists('Punycode'))
+        @include_once('lib/classes/class.punicode.php');
+    $Punycode = new Punycode();
+    $domain = $Punycode->decode(strtolower(trim($params['sld'].'.'.$params['tld'])));
+    $domain_info = $vname_domains->view_domain_info($params);
+    if($domain_info['status']['code']< 200 || $domain_info['status']['code'] > 299){
+        $values['error'] = $domain_info['status']['description'];
+    }
+    else{
+        $status = $domain_info['response'][0]['product_info']['product_status'];
+        if($status != 'active_pending_registrant_approval'){
+            $values['error'] = $configLang['error_resend_irtp'];
+        }
+        else{
+            $fields = array();
+            $module = 'domains/domains';
+            $action = $domain_info['response'][0]['id'].'/resend-irtp-verification.json';
+            $RESTful= 'GET';
+            $params['action'] = 'ResendIRTP';
+            try{
+                $request = $vname_domains->api_call($params,$fields, $module, $action, $RESTful);
+            }catch (Exception $e){
+                return ($e->getMessage());
+            }
+            if($request['status']['code']< 200 || $request['status']['code'] > 299){
+                $values['error'] = $request['status']['description'];
+                if(isset($request['response']['name']))
+                    $values['error'] .= ': '.implode(',', $request['response']['name']);
+            }
+        }
+    }
+    //$vname_domains->destroy_domain_cache($domain);
+    return $values;
+}
 
 //SYNC STATUS AND DATES FROM DOMAIN
 function virtualname_SyncDomain($params){
