@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -144,6 +144,27 @@ class Virtualname_domains extends Virtualname_api{
 	    	$request['status']['description'] = $configLang['resource_not_found'];
 	    }
 	    return $request;
+	}
+	//GET DOMAIN LIFECYCLE
+	public function view_domain_lifecycle($domain_id) {
+		$params = $this->config();
+	    $this->check_configuration($params);
+	    $adminID = $_SESSION['adminid'];
+   	    $configLang = $this->get_config_lang($adminID);
+	    $fields = array();
+        $module = 'domains/domains';
+        $action = $domain_id.'/lifecycle.json';
+	    $RESTful= 'GET';
+	    $params['action'] = 'ViewDomainLifecycle';
+	    try{
+			$request = $this->api_call($params, $fields, $module, $action, $RESTful);
+	    }catch (Exception $e){
+	        return ($e->getMessage());
+	    }
+	    $info = $request['response'];
+	    if($info[0] == 'Connection error' || !$info)
+	    	return false;
+	    return $info;
 	}
 	public function view_domain_info_hook($domain) {
 		$params = $this->config();
@@ -1692,6 +1713,14 @@ class Virtualname_domains extends Virtualname_api{
 		if (!$email->Send())
 			logActivity('Virtualname Admin Email Notification Sending Failed - ' . $email->ErrorInfo . (' (Subject: ' . $subject . ')'), 'none');
 		$email->ClearAddresses();
+	}
+	public function tld_check_enable_lock($tld) {
+		$params = $this->config();
+	    $disabled_lock_TLD = explode(' ', $params['disablelocktlds']);
+	    if(in_array($tld, $disabled_lock_TLD))
+	        return false;
+	    else
+	    	return true;
 	}
 }
 ?>

@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -71,14 +71,7 @@ elseif ($currentAction == 'contacts') {
   Menu::primarySidebar('clientView');
   $clientArea->setPageTitle($whmcs->get_lang('clientareanavcontacts'));
 }
-elseif ($currentAction == 'domaincontacts') {
-  $domainid = virtualname_get_domain_id();
-  $clientArea->assign('domainId' , $domainid);
-  Menu::primarySidebar('domainView');
-  Menu::secondarySidebar('domainView');
-  $clientArea->setPageTitle($whmcs->get_lang('managedomain'));
-}
-elseif ($currentAction == 'domainrecords') {
+elseif (in_array($currentAction, ['domaincontacts', 'domainrecords', 'domainlifecycle'])) {
   $domainid = virtualname_get_domain_id();
   $clientArea->assign('domainId' , $domainid);
   Menu::primarySidebar('domainView');
@@ -107,14 +100,12 @@ if(isset($domainid) AND $domainid != 0){
 $check_tax_id_enable = virtualname_check_if_tax_id_enable();
 
 //CHECK VALIDATE CUSTOM ACTIONS
-$virtualname_posible_actions = array('details', 'contacts', 'addcontact', 'domaincontacts', 'generateContact', 'domainrecords');
+$virtualname_posible_actions = array('details', 'contacts', 'addcontact', 'domaincontacts', 'generateContact', 'domainrecords', 'domainlifecycle');
 if ($currentAction == '' || !in_array($currentAction, $virtualname_posible_actions)) {
   header('Location: ./clientarea.php');
 }
 else {
-
   if($currentAction == 'details'){
-
     checkContactPermission('profile');
     $config_template = virtualname_get_template_config();
     $clientArea->setTemplate('../../modules/registrars/virtualname/includes/templates/'.$config_template.'/clientareadetailsdata');
@@ -207,7 +198,6 @@ else {
     $clientArea->assign('emailPreferencesEnabled', $email_client_preferences_enable);
   }
   elseif ($currentAction == 'generateContact'){
-
     checkContactPermission('managedomains');
     //CONTACT ARRAY DATA
     $contactId = $whmcs->get_req_var('contactinfo');
@@ -414,7 +404,6 @@ else {
     $smartyvalues['legalforms'] = $legal_forms;
   }
   elseif ($currentAction == 'contacts') {
-
     checkContactPermission('contacts');
     $config_template = virtualname_get_template_config();
     $clientArea->setTemplate('../../modules/registrars/virtualname/includes/templates/'.$config_template.'/clientareadetailsdata');
@@ -608,6 +597,31 @@ else {
 
     primary_sidebar();
   }
+  elseif ($currentAction == 'domainlifecycle'){
+    checkContactPermission('managedomains');
+    $config_template = virtualname_get_template_config();
+    $clientArea->setTemplate('../../modules/registrars/virtualname/includes/templates/'.$config_template.'/clientareadetailsdata');
+    $clientArea->assign('currentAction', 'domainlifecycle');
+    $domains  = new WHMCS\Domains();
+    $domain_data = $domains->getDomainsDatabyID($domainid);
+    // O NO TENGO PERMISOS
+    $enable_lifecycle = virtualname_check_enable_lifecycle();
+    if (!$domain_data || !$domains->isActive() || !$enable_lifecycle) {
+      redir('action=domains', 'clientarea.php');
+    }
+    $clientArea->addToBreadCrumb('clientarea.php?action=domainlifecycle&id='.$domain_data['id'], $domain_data['domain']);
+    $clientArea->addToBreadCrumb('#', $whmcs->get_lang('domainaddonsdnsmanagement'));
+    $smartyvalues['domainid'] = $domains->getData('id');
+    $smartyvalues['domain'] = $domains->getData('domain');
+    $lifecycle = virtualname_get_domain_lifecycle($domainid);
+    if(!isset($lifecycle['error']))
+      $smartyvalues['lifecycle'] = $lifecycle;
+    else
+      $smartyvalues['errormessage'] = $lifecycle['error'];
+    $tld = $domains->getTLD();
+    $tlddata = get_query_vals("tbldomainpricing", "", array("extension" => ".".$tld));
+    primary_sidebar();
+  }
 }
 
 //PRINT CUSTOM PAGE
@@ -616,6 +630,15 @@ $clientArea->output();
 ############################################################
 ############CUSTOM FUNCTIONS################################
 ############################################################
+//CHECK LIFECYCLE ENABLE
+function virtualname_check_enable_lifecycle(){
+  //INIT MODULE
+  require_once(dirname(__FILE__).'/modules/registrars/virtualname/virtualname.php');
+  global $vname_admin;
+  virtualname_init();
+  $response = $vname_admin->check_enable_lifecycle();
+  return $response;
+}
 //CHECK DNS RECORDS MANAGEMENT ENABLE
 function virtualname_check_enable_dns_records_management(){
   //INIT MODULE
@@ -817,6 +840,18 @@ function virtualname_get_domain_records($domainid){
   return $response;
 }
 
+//GET LIFECYCLE
+function virtualname_get_domain_lifecycle($domainid){
+  //INIT MODULE
+  require_once(dirname(__FILE__).'/modules/registrars/virtualname/virtualname.php');
+  global $vname_domains;
+  virtualname_init();
+  $domain = $vname_domains->get_whmcs_domain('', $domainid);
+  $domain_info = $vname_domains->view_domain_info_hook($domain['domain']);
+  $response = $vname_domains->view_domain_lifecycle($domain_info['domain_id']);
+  return $response;
+}
+
 //GET DOMAINID
 function virtualname_get_domain_id(){
   if($_GET && $_GET['id'])
@@ -832,7 +867,10 @@ function virtualname_get_domain_id(){
 
 function primary_sidebar(){
     add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar){
-    global $tlddata, $whmcs;
+    global $tlddata, $whmcs, $vname_domains;
+    $enable_lock = $vname_domains->tld_check_enable_lock(ltrim($tlddata["extension"], '.'));
+    if($tlddata['dnsmanagement'] || $tlddata['emailforwarding'] || $tlddata['idprotection'])
+      $enabled_addons = true;
     if (!is_null($primarySidebar->getChild('Domain Details Management'))) {
       $child = $primarySidebar->getChild('Domain Details Management')->getChild('Overview');
       if (is_null($child)) {
@@ -852,16 +890,20 @@ function primary_sidebar(){
           ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabNameservers')
           ->setLabel($whmcs->get_lang('domainnameservers'))
           ->setOrder(120);
-        $primarySidebar->getChild('Domain Details Management')
-          ->addChild('Registrar Lock Status')
-          ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabReglock')
-          ->setLabel($whmcs->get_lang('domainregistrarlock'))
-          ->setOrder(130);
-        $primarySidebar->getChild('Domain Details Management')
-          ->addChild('Addons')
-          ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabAddons')
-          ->setLabel($whmcs->get_lang('domainaddons'))
-          ->setOrder(140);
+        if($enable_lock){
+          $primarySidebar->getChild('Domain Details Management')
+            ->addChild('Registrar Lock Status')
+            ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabReglock')
+            ->setLabel($whmcs->get_lang('domainregistrarlock'))
+            ->setOrder(130);
+        }
+        if($enabled_addons){
+          $primarySidebar->getChild('Domain Details Management')
+            ->addChild('Addons')
+            ->setUri('clientarea.php?action=domaindetails&id='.$domainid.'#tabAddons')
+            ->setLabel($whmcs->get_lang('domainaddons'))
+            ->setOrder(140);
+        }
         $primarySidebar->getChild('Domain Details Management')
           ->addChild('Domain Contacts')
           ->setUri('clientarea.php?action=domaincontacts&domainid=' . $domainid)

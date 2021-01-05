@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -227,7 +227,8 @@ class Virtualname_contacts extends Virtualname_domains{
             'The Vale of Glamorgan' => 'Vale Of Glamorgan'
         );
         $es = array(
-            'Araba/álava' => 'Araba'
+            'Araba/álava' => 'Araba',
+            'Málaga' => 'Malaga'
         );
         if(array_key_exists($state, $uk))
             $state = $uk[$state];

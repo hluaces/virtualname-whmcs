@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -40,7 +40,7 @@ class Virtualname_install extends Virtualname_admin{
 	        $customadminpath = 'admin';
 
 	    //CHECK VIRTUALNAME VARIABLES
-	    $virtualname_variables = array('APIKey','autoRenew','hideicnumber','freeRegisterDomains','freeRenewDomains','templateVersion','secureRenovation','defaultvatnumber','devMode','debug','install-virtualname','disablelocktlds','outboundTransferMailing','defaultNameserversError', 'disableAdvanceContacts', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'disableContactVerification', 'enableDomainRecords');
+	    $virtualname_variables = array('APIKey','autoRenew','hideicnumber','freeRegisterDomains','freeRenewDomains','templateVersion','secureRenovation','defaultvatnumber','devMode','debug','install-virtualname','disablelocktlds','outboundTransferMailing','defaultNameserversError', 'disableAdvanceContacts', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'disableContactVerification', 'enableDomainRecords', 'enableDomainLifecycle');
 	    foreach($virtualname_variables as $variable){
 	        $where = array('registrar'=>'virtualname','setting'=>$variable);
 	        $var_search = select_query('tblregistrars','value',$where);
@@ -173,6 +173,7 @@ class Virtualname_install extends Virtualname_admin{
                 'lib/crons/sync.php',
                 'lib/install/install.php',
                 'themes/css/virtualname_adm.css',
+                'themes/css/virtualname.css',
                 'themes/js/virtualname_adm.js',
                 'themes/js/virtualname_client.js',
                 'logo.gif',

@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -219,6 +219,8 @@
     $langs_vn['disableContactVerification'] = 'Desactivar verificación de datos de contactos y clientes si no están vinculados';
     $langs_vn['enableDomainRecordsField'] = 'Habilitar registros DNS';
     $langs_vn['enableDomainRecords'] = 'Habilitar gestión de registros DNS';
+    $langs_vn['enableDomainLifecycleField'] = 'Ciclo de vida';
+    $langs_vn['enableDomainLifecycle'] = 'Mostrar el ciclo de vida de dominios en la vista de cliente';
     $langs_vn['error_fields']['phone'] = 'Teléfono';
     $langs_vn['error_fields']['state'] = 'Provincia';
     $langs_vn['error_fields']['name'] = 'Nombre';
@@ -233,4 +235,13 @@
     $langs_vn['error_fields']['zipcode'] = 'Código postal';
     $langs_vn['error_fields']['phonecc'] = 'Código telefónico';
     $langs_vn['error']['field'] = 'Campo';
+    $langs_vn['sync_domain'] = 'Sincronizar dominio';
+    $langs_vn['resend_irtp'] = 'Reenviar verificación IRTP';
+    $langs_vn['success_resend_irtp'] = 'Solicitado reenvío del correo de verificación de IRTP';
+    $langs_vn['error_resend_irtp'] = 'Solo se puede reenviar el correo de verificación en dominios en estado de IRTP';
+    $langs_vn['lifecycle'] = 'Ciclo de vida';
+    $langs_vn['renew_date'] = 'Fecha de renovación';
+    $langs_vn['deletion_period_date'] = 'Periodo de eliminación';
+    $langs_vn['release_date'] = 'Fecha de liberación';
+    $langs_vn['dns_records'] = 'Registros DNS';
 ?>

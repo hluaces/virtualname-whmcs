@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -14,7 +14,7 @@
 class Virtualname_admin{
 	#CLASS CONSTANTS#
 
-	public $module_version = '1.2.3';
+	public $module_version = '1.2.4';
 	public $vn_module_dir = 'modules/registrars/virtualname/';
 	public $vn_whmcs_dir;
 	public $vn_whmcs_version = '7';
@@ -83,6 +83,7 @@ class Virtualname_admin{
                 'lib/install/install.php',
                 'logs/virtualname_errors_log.txt',
                 'themes/css/virtualname_adm.css',
+                'themes/css/virtualname.css',
                 'themes/js/virtualname_adm.js',
                 'themes/js/virtualname_client.js'
         );
@@ -239,7 +240,7 @@ class Virtualname_admin{
 	    );
 	    //GET ALL CONFIGS
 	    if(!isset($params) || !isset($configarray['APIKey'])){
-	        $configs = array('APIKey', 'devMode', 'defaultvatnumber', 'hideicnumber', 'disablelocktlds', 'outboundTransferMailing', 'defaultNameserversError', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'taxid', 'disableContactVerification', 'enableDomainRecords');
+	        $configs = array('APIKey', 'devMode', 'defaultvatnumber', 'hideicnumber', 'disablelocktlds', 'outboundTransferMailing', 'defaultNameserversError', 'defaultDomainsMail', 'defaultAdminRoles', 'validationNewClient', 'taxid', 'disableContactVerification', 'enableDomainRecords', 'enableDomainLifecycle');
 	        $table = 'tblregistrars';
 	        $fields = 'value';
 	        foreach($configs as $setting){
@@ -462,6 +463,15 @@ class Virtualname_admin{
         $config = $this->config();
         $check = false;
         if(isset($config['enableDomainRecords']) && $config['enableDomainRecords'] == 'on')
+           $check = true;
+        return $check;
+    }
+
+    //CHECK LIFECYCLE IS NOT DISABLED
+    public function check_enable_lifecycle(){
+        $config = $this->config();
+        $check = false;
+        if(isset($config['enableDomainLifecycle']) && $config['enableDomainLifecycle'] == 'on')
            $check = true;
         return $check;
     }

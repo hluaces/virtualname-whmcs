@@ -4,7 +4,7 @@
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -22,20 +22,13 @@ function setExtraAdditional($userID){
     //INIT MODULE
     global $vname_admin;
     virtualname_init();
+    $_LANG = $smarty->get_template_vars('LANG');
     if(isset($_SESSION['adminid']) AND $_SERVER['REQUEST_URI'] != '/cart.php?a=confdomains'){
         if($userID == '')
             $userID = $_GET['userid'];
-        if(!isset($_LANG['domainbillingcontact'])) $_LANG['domainbillingcontact'] = 'Billing Contact';
-        if(!isset($_LANG['domaintechcontact'])) $_LANG['domaintechcontact']       = 'Technical Contact';
-        if(!isset($_LANG['domainadmincontact'])) $_LANG['domainadmincontact']     = 'Admin Contact';
-        if(!isset($_LANG['domainregcontact'])) $_LANG['domainregcontact']         = 'Register Contact';
-        if(!isset($_LANG['domaindefaultcontact'])) $_LANG['domaindefaultcontact'] = 'Use default contact';
-        if(!isset($_LANG['domainaddcontact'])) $_LANG['domainaddcontact'] = 'Add new contact';
-        if(!isset($_LANG['domaincontactrefresh'])) $_LANG['domaincontactrefresh'] = 'Refresh';
         $contacts = $vname_contacts->get_client_contacts($userID);
     }
     else{
-        $_LANG = $smarty->get_template_vars('LANG');
         if(!$userID || empty($userID)){
             if($clientDetails && $clientDetails['userid'])
                 $userID = $clientDetails['userid'];

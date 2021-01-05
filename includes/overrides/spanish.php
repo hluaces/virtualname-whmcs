@@ -9,7 +9,7 @@ if (!defined('WHMCS')) die('This file cannot be accessed directly');
 // * PLUGIN Api v1
 // * WHMCS version 7.10.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.3
+// * @version 1.2.4
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -90,8 +90,16 @@ $_LANG['delete_glue_records'] = 'No se puede eliminar el nameserver';
 $_LANG['virtualname']['name'] = 'Nombre';
 $_LANG['virtualname']['content'] = 'Contenido';
 $_LANG['virtualname']['delete'] = 'Borrar';
+$_LANG['virtualname']['empty'] = 'No hay información disponible';
 $_LANG['records']['description'] = 'Desde aquí puede crear y administrar registros DNS para su dominio (por ejemplo: registros SOA, MX, A, AAAA, etc...).';
 $_LANG['records']['create'] = 'Crear registro';
 $_LANG['records']['notfound'] = 'No hay registros creados para este dominio.';
 $_LANG['zone']['notfound'] = 'No hay zonas DNS creadas para este dominio. Póngase en contacto con un administrador para crearlos.';
+$_LANG['domainlifecycle'] = 'Ciclo de vida';
+$_LANG['domainrenewdate'] = 'Renovación';
+$_LANG['domainregistrationdate'] = 'Registro';
+$_LANG['domainexpirationdate'] = 'Expiración';
+$_LANG['domaindeletionperiod'] = 'Periodo de Eliminación';
+$_LANG['domainredemptionperiod'] = 'Periodo de Redención';
+$_LANG['domainreleasedate'] = 'Fecha de Liberación';
 ######VIRTUALNAME REGISTRAR LANGS######
