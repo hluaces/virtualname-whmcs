@@ -1,0 +1,31 @@
+{
+  "schema": "1.0",
+  "type": "whmcs-registrars",
+  "name": "virtualname_tools",
+  "license": "proprietary",
+  "category": "domains",
+  "description": {
+    "name": "Virtualname Tools",
+    "tagline": "Herramientas de gestión de dominios, contactos y tarifas.",
+    "long": "## Módulo de herramientas para la gestión de dominios y contactos con Tecnocrática Centro de Datos SL.",
+    "features": [
+      "Sincronización de dominios, contactos y precios",
+      "Herramientas de importación",
+      "Revisión de datos múltiples"
+    ]
+  },
+  "logo": {
+    "filename": "logo.gif"
+  },
+  "support": {
+    "homepage": "https:\/\/www.tecnocratica.net\/",
+    "support_url": "https:\/\/panel.virtualname.net\/",
+    "docs_url": "https:\/\/whmcs.virtualname.net\/"
+  },
+  "authors": [
+    {
+      "name": "Tecnocrática Centro de Datos SL",
+      "homepage": "https:\/\/www.tecnocratica.net\/"
+    }
+  ]
+}
