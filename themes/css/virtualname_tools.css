@@ -1,0 +1,50 @@
+#progressbar .ui-progressbar-value {
+    background-color: #D3FC96 !important;
+}
+.ui-progressbar {
+    position: relative;
+    display:none;
+}
+.progress-label {
+    position: absolute;
+    left: 50%;
+    top: 4px;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #fff;
+}
+.ui-widget-header {
+    background-image: none !important;
+    background-color: #D3FC96 !important;
+}
+.vn_button_appearance{
+    appearance: button;
+    -moz-appearance: button;
+    -webkit-appearance: button;
+    text-decoration: none !important;
+    color: buttontext;
+    display: inline-block;
+    padding: 2px 8px;
+}
+.disabled{
+   pointer-events: none;
+   cursor: default;
+}
+.container_sync{
+    width:auto;
+    max-height:400px;
+    overflow:auto;
+}
+.legend { list-style: none; }
+.legend li { float: left; margin-right: 10px; }
+.legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
+.legend .created { background-color: deepskyblue; }
+.legend .checked { background-color: blue; }
+.legend .error { background-color: red; }
+.legend .warning { background-color: darkorange; }
+.legend .updated { background-color: forestgreen; }
+.legend .vinculated { background-color: orange; }
+
+.reload_tools{
+    color: #3eec3e;
+    font-size: 25px;
+}
