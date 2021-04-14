@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.10.X
+// * WHMCS version 8.1.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.4
+// * @version 1.2.7
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -1603,7 +1603,8 @@ class Virtualname_domains extends Virtualname_api{
             		$registrant = $vars['params']['contactdetails']['Registrant'];
                     $contacts_response = $vname_contacts->transfer_contact_registrar($values, $vars['params']['registrar'], $transfer_domain['value']);
                     $vars['params']['contactdetails'] = $contacts_response['contacts'];
-                    $vars['params']['contactdetails']['Registrant'] = $registrant;
+                    if(!empty($registrant) && !isset($vars['params']['contactdetails']['Registrant']))
+	                    $vars['params']['contactdetails']['Registrant'] = $registrant;
                     $response_set_mail = RegSaveContactDetails($vars['params']);
                     if(!$response_set_mail['error'] AND $response_set_mail['success']){
                     	$this->set_email_transfer_on_renewal($domainid, $values['Admin'][$email_field]);

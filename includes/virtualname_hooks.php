@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.10.X
+// * WHMCS version 8.1.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.4
+// * @version 1.2.7
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -384,6 +384,14 @@ function hook_return_admin_contact_page($var){
     $add_tab_files = array('clientssummary', 'clientscontacts', 'clientsprofile', 'clientsdomains', 'clientsbillableitems', 'clientsinvoices', 'clientsquotes', 'clientstransactions', 'clientsemails', 'clientsnotes', 'clientslog', 'clientsservices');
     if($var['filename'] == 'clientsdomains'){
         $js .=  '<script type=\'text/javascript\' src=\''.$currentPath.'/../modules/registrars/virtualname/themes/js/virtualname_adm.js\'></script>';
+    }
+    if($var['filename'] == 'index'){
+        if( isset($_GET['rp']) && isset($_GET['userid']) ){
+            if(strpos($_GET['rp'], 'client/'.$_GET['userid'].'/users') !== false){
+                $js .= '<script type=\'text/javascript\' src=\''.$currentPath.'/../modules/registrars/virtualname/themes/js/virtualname_adm_tabs.js\'></script>';
+                $js .= '<script type=\'text/javascript\'>virtualname_client_tab('.$_GET['userid'].');</script>';            
+            }
+        }
     }
     if(in_array($var['filename'], $add_tab_files)){
         if(isset($_GET['userid'])){

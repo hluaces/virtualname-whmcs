@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.10.X
+// * WHMCS version 8.1.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.4
+// * @version 1.2.7
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -1222,6 +1222,7 @@ class Virtualname_contacts extends Virtualname_domains{
         global $vname_admin, $vname_domains;
         virtualname_init();
         $vname_admin->check_configuration($params);
+
         if(isset($params['original']['sld'])){if($params['sld'] != $params['original']['sld']){$params['sld'] = $params['original']['sld'];}}
         if(isset($params['original']['tld'])){if($params['tld'] != $params['original']['tld']){$params['tld'] = $params['original']['tld'];}}
         if(!class_exists('Punycode'))
@@ -1230,9 +1231,9 @@ class Virtualname_contacts extends Virtualname_domains{
         $domain = $Punycode->decode(strtolower(trim($params['sld'].'.'.$params['tld'])));
         $domain_info = $vname_domains->view_domain_info($params);
 
-        if($domain_info['status']['code']< 200 || $domain_info['status']['code'] > 299){
+        //if($domain_info['status']['code']< 200 || $domain_info['status']['code'] > 299){
             //$values['error']  = $domain_info['status']['description'];
-        }
+        //}
 
         $langs = array('registrant'=>'reg','administrative'=>'admin','billing'=>'billing','technical'=>'tech');
         $contacts = array('registrant','administrative','billing','technical');
@@ -1248,7 +1249,7 @@ class Virtualname_contacts extends Virtualname_domains{
                         $infoContact = $domain_info['response'][0]['contacts'][$key];
                         if($infoContact['company'] != '')
                             $contactData = $infoContact['company'].' - ';
-                        $contactData .= $infoContact['name'].' '.$infoContact['lastname'];
+                        $contactData .= $infoContact['name'].' '.$infoContact['lastname'].' ['.$infoContact['id'].']';
                     }
                     else{
                         $contactData = 'N/A';
@@ -1271,16 +1272,17 @@ class Virtualname_contacts extends Virtualname_domains{
             $response = $this->get_whmcs_tcpanel_type($id, $userID);
 
             if($key == 'registrant')
-                $addiotionalKey = 'reg';
+                $additionalKey = 'reg';
             elseif($key == 'technical')
-                $addiotionalKey = 'tech';
+                $additionalKey = 'tech';
             elseif($key == 'administrative')
-                $addiotionalKey = 'admin';
+                $additionalKey = 'admin';
             elseif($key == 'billing')
-                $addiotionalKey = 'billing';
+                $additionalKey = 'billing';
 
             $type = $response['contact_type'];
             $contactID = $response['id_contact_whmcs'];
+
             if($type == 2){
                 $selectedContactAdmin = '/clientsdatadomaincontacts.php?userid='.$userID .'&contactid='.$contactID.'&action=clientscontacts';
                 $message = 'edit';
@@ -1307,10 +1309,10 @@ class Virtualname_contacts extends Virtualname_domains{
 
             foreach($clientContacts as $contact){
                 $ticker = $this->get_validate_contact($contact['id'],2);
-                $contactName = $ticker.$contact['firstname'].' '.$contact['lastname'].' '.$contact['email'];
+                $contactName = $ticker.$contact['firstname'].' '.$contact['lastname'].' '.$contact['email'].' ['.$contact['id'].']';
                 if($contact['id']==$contactID)
                     $contactOptions .= '<option value='.$contact['id'].' selected>'.$contactName.'</option>';
-                elseif($contact['id']==$additionalcontactsfields[$addiotionalKey.'Contact'])
+                elseif($contact['id']==$additionalcontactsfields[$additionalKey.'Contact'])
                     $contactOptions .= '<option value='.$contact['id'].' selected>'.$contactName.'</option>';
                 else
                     $contactOptions .= '<option value='.$contact['id'].'>'.$contactName.'</option>';
@@ -1356,13 +1358,13 @@ class Virtualname_contacts extends Virtualname_domains{
             $response = $this->get_whmcs_tcpanel_type($id, $userID);
 
             if($key == 'registrant')
-                $addiotionalKey = 'reg';
+                $additionalKey = 'reg';
             elseif($key == 'technical')
-                $addiotionalKey = 'tech';
+                $additionalKey = 'tech';
             elseif($key == 'administrative')
-                $addiotionalKey = 'admin';
+                $additionalKey = 'admin';
             elseif($key == 'billing')
-                $addiotionalKey = 'billing';
+                $additionalKey = 'billing';
 
             $type = $response['contact_type'];
             $contactID = $response['id_contact_whmcs'];
@@ -1389,10 +1391,10 @@ class Virtualname_contacts extends Virtualname_domains{
 
             foreach($clientContacts as $contact){
                 $ticker = $this->get_validate_contact($contact['id'],2);
-                $contactName = $ticker.$contact['firstname'].' '.$contact['lastname'].' '.$contact['email'];
+                $contactName = $ticker.$contact['firstname'].' '.$contact['lastname'].' '.$contact['email'].' ['.$contact['id'].']';
                 if($contact['id']==$contactID)
                     $contactOptions .= '<option value='.$contact['id'].' selected>'.$contactName.'</option>';
-                elseif($contact['id']==$additionalcontactsfields[$addiotionalKey.'Contact'])
+                elseif($contact['id']==$additionalcontactsfields[$additionalKey.'Contact'])
                     $contactOptions .= '<option value='.$contact['id'].' selected>'.$contactName.'</option>';
                 else
                     $contactOptions .= '<option value='.$contact['id'].'>'.$contactName.'</option>';
@@ -1597,7 +1599,7 @@ class Virtualname_contacts extends Virtualname_domains{
         }
 
         if($error == true){
-            logModuleCall('virtualname', 'SetDomainContacts ERROR', array('contacts'=>$tcpanel_contacts), array('error' => $configLang['errorContactNotFound']), '', '');
+            logModuleCall('virtualname', 'SetDomainContacts ERROR', array('contacts'=>$tcpanel_contacts), '', array('error' => $configLang['errorContactNotFound']), '');
             $params['error'] = 'panelContactError';
             return $params;
         }
@@ -1694,7 +1696,7 @@ class Virtualname_contacts extends Virtualname_domains{
                 $error = true;
         }
         if($error == true){
-            logModuleCall('virtualname', 'SetDomainContacts ERROR', array('contacts'=>$new_contacts), array('error' => $configLang['errorContactNotFound']), '', '');
+            logModuleCall('virtualname', 'SetDomainContacts ERROR', array('contacts'=>$new_contacts), '', array('error' => $configLang['errorContactNotFound']), '');
             $params['error'] = 'panelContactError';
             return $params;
         }
@@ -1913,6 +1915,13 @@ class Virtualname_contacts extends Virtualname_domains{
         if(empty($last_name))
             $last_name = $first_name;
         return array($first_name, $last_name);
+    }
+    function update_tbldomainsadditionalfields($domain_id, $contact_id, $contact_type){
+        $sql  = 'UPDATE tbldomainsadditionalfields';
+        $sql .= ' SET tbldomainsadditionalfields.value = \''.$contact_id.'\'';
+        $sql .= ' WHERE domainid = \''.$domain_id.'\' AND tbldomainsadditionalfields.name = \''.$contact_type.'\'';
+        $resUp = mysql_query($sql);
+        if ($error = mysql_error()) die('link_domain_contacts ERR: '. $error.' SQL: ' . $sql);
     }
 }
 ?>

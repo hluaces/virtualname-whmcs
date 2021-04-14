@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.10.X
+// * WHMCS version 8.1.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.4
+// * @version 1.2.7
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -94,9 +94,8 @@ class Virtualname_api extends Virtualname_admin{
 	    }
 	    curl_close($cURL);
 	    if(trim($cURLError))
-	        logModuleCall('virtualname', 'cURLError', $all_fields, $cURLError, '', '');
-	    logModuleCall('virtualname', $params['action'], $all_fields, $response, '', '');
-
+	        logModuleCall('virtualname', 'cURLError', $all_fields, '', $cURLError, '');
+	    logModuleCall('virtualname', $params['action'], $all_fields, '', $response, '');
 	    if($response['status']['code']< 200 || $response['status']['code'] > 299){
 		    $error_fields = array('url'=>$cURL_init, 'fields'=>$fields,'params_config'=>$params_config,
 		                       'cURL' => 'curl -vvv -H \'X-TCpanel-Token: api-key\' -H \'Host: api.virtualname.net\' '.$cURL_init);

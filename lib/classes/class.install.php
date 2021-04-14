@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.10.X
+// * WHMCS version 8.1.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.4
+// * @version 1.2.7
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -13,7 +13,7 @@
 // *************************************************************************
 class Virtualname_install extends Virtualname_admin{
 	#CLASS CONSTANTS#
-	public $repository = 'http://whmcs.virtualname.net/whmcs-repositories/updateVname_1.php?version=';
+	public $repository = 'http://whmcs.virtualname.net/whmcs-repositories/update-vname-whmcs8.php?version=';
 
 	//GET REGISTRAR INSTALLATION STATUS
 	public function check_install(){

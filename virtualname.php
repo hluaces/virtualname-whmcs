@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.10.X
+// * WHMCS version 8.1.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.4
+// * @version 1.2.7
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -23,6 +23,15 @@ virtualname_init();
 function virtualname_init(){
     global $vname_admin, $vname_domains, $vname_nameservers, $vname_contacts, $vname_install, $vname_api, $vname_domains, $vname_contacts, $vname_nameservers, $vname_prices;
     include_once dirname(__FILE__) . '/init.php';
+}
+
+//METADATA
+function virtualname_MetaData(){
+    return array(
+        'DisplayName' => 'Modulo registrador Virtualname',
+        'APIVersion' => '1.2.7',
+        'Category' => 'Registrar'
+    );
 }
 
 //DEFAULT WHMCS CONFIG ARRAY

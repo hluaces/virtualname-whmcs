@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.10.X
+// * WHMCS version 8.1.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.4
+// * @version 1.2.7
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -160,17 +160,10 @@ else {
     //$clientArea->assign('emailoptout', $whmcs->get_req_var_if($e, 'emailoptout', $exdetails));
     //$clientArea->assign('emailoptoutenabled', $whmcs->get_config('AllowClientsEmailOptOut'));
     $clientArea->assign('defaultpaymentmethod', $whmcs->get_req_var_if($e, 'defaultgateway', $exdetails));
-    //GDPR EMAIL OPT IN OUT FOR WHMCS 7.5
-    if($whmcs_show_marketing){
-      $clientArea->assign('showMarketingEmailOptIn', $whmcs->get_config('AllowClientsEmailOptOut'));
-      $clientArea->assign('marketingEmailOptInMessage', $CONFIG['EmailMarketingOptInMessage']);
-      $clientArea->assign('marketingEmailOptIn', $whmcs->get_req_var_if($e, 'marketing_emails_opt_in', $exdetails));
-    }
-    else{
-      $clientArea->assign('showMarketingEmailOptIn', false);
-      $clientArea->assign('marketingEmailOptInMessage', false);
-      $clientArea->assign('marketingEmailOptIn', false);
-    }
+    //GDPR EMAIL OPT IN OUT
+    $clientArea->assign('showMarketingEmailOptIn', $whmcs->get_config('AllowClientsEmailOptOut'));
+    $clientArea->assign('marketingEmailOptInMessage', $CONFIG['EmailMarketingOptInMessage']);
+    $clientArea->assign('marketingEmailOptIn', $whmcs->get_req_var_if($e, 'marketing_emails_opt_in', $exdetails));
     $userid       = $client->getID();
     //TAX_ID
     $identificationContact = virtualname_get_identification_number($userid, 1);
