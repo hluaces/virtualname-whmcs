@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.10.X
+// * WHMCS version 8.1.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.4
+// * @version 1.2.7
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -40,7 +40,6 @@ if(is_null($action) AND is_null($domainid)){
 }
 
 if($action == 'clientscontacts' || $action == 'clientscontactssave' || $action == 'clientscontactsdelete'){
-
     $adminPage->inClientsProfile = true;
     $adminPage->valUserID($userid);
     $contactPage = '';
@@ -461,6 +460,7 @@ else{
     if ($action == 'save') {
 
         check_token('WHMCS.admin.default');
+
         $values = RegSaveContactDetails($params);
 
         $reg_id = $_POST['sel']['reg'];
@@ -477,8 +477,21 @@ else{
         else
             $contactPage .= '<div class=\'successbox\'><strong><span class=\'title\'>'.$_LANG['moduleactionsuccess'].'</span></strong><br>'.$_LANG['adminUpdatedContacts'].'</div>';
 
-        if($panel_contact_error)
+        if($panel_contact_error){
             infoBox($adminPage->lang('domains', 'registrarerror'), $panel_contact_error);
+            //UPDATE CONTACTS ONLY IF DOMAIN NOT EXIST
+            $info = $vname_domains->view_domain_info($vname_admin->config());
+            if($info['status']['code'] == '404'){
+                if($reg_id)
+                    $vname_contacts->update_tbldomainsadditionalfields($domainid, $reg_id, 'regContact');
+                if($adm_id)
+                    $vname_contacts->update_tbldomainsadditionalfields($domainid, $adm_id, 'adminContact');
+                if($bill_id)
+                    $vname_contacts->update_tbldomainsadditionalfields($domainid, $bill_id, 'techContact');
+                if($tech_id)
+                    $vname_contacts->update_tbldomainsadditionalfields($domainid, $tech_id, 'billingContact');
+            }
+        }
     }
 
     $allIDN = $vname_contacts->get_all_identification_number($userid);
@@ -589,19 +602,21 @@ else{
 }
 
 if($adminPage->inClientsProfile){
-    $header = tab_header($adminPage);
+    $admin_folder = $whmcs->get_admin_folder_name();
+    $header = tab_header($adminPage, $admin_folder);
     $contactPage = $header.$contactPage;
 }
 $adminPage->content = $contactPage;
 $adminPage->display();
 
-function tab_header($adminPage) {
+function tab_header($adminPage, $admin_folder) {
     global $CONFIG;
     $user_id = $_GET['userid'];
     $urls_array= array(
         'clientssummary' => $adminPage->lang('clientsummary', 'summary'),
         'clientsprofile' => $adminPage->lang('clientsummary', 'profile'),
         'clientsdatadomaincontacts' => 'TCPanel',
+        'clientsusers' => $adminPage->lang('user', 'userTab'),
         'clientscontacts' => $adminPage->lang('clientsummary', 'contacts'),
         'clientsservices' => $adminPage->lang('clientsummary', 'products'),
         'clientsdomains' => $adminPage->lang('clientsummary', 'domains'),
@@ -625,6 +640,8 @@ function tab_header($adminPage) {
     foreach ($urls_array as $key => $value) {
         if ($key == 'clientsdatadomaincontacts')
             $header .= '<li class=\'active\'><a href=\''.$key.'.php?userid='.$user_id.'\'>'.$value.'</a></li>';
+        elseif ($key == 'clientsusers')
+            $header .= '<li class=\'tab\'><a href=\'index.php?rp=/'.$admin_folder.'/client/'.$user_id.'/users\'>'.$value.'</a></li>';
         else
             $header .= '<li class=\'tab\'><a href=\''.$key.'.php?userid='.$user_id.'\'>'.$value.'</a></li>';
     }

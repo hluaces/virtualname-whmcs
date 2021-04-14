@@ -7,9 +7,9 @@ if (!defined('WHMCS')) die('This file cannot be accessed directly');
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.10.X
+// * WHMCS version 8.1.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.4
+// * @version 1.2.7
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel

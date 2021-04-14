@@ -2,9 +2,9 @@
 // *************************************************************************
 // * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 7.10.X
+// * WHMCS version 8.1.X
 // * @copyright Copyright (c) 2020, Virtualname
-// * @version 1.2.4
+// * @version 1.2.7
 // * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
@@ -14,10 +14,10 @@
 class Virtualname_admin{
 	#CLASS CONSTANTS#
 
-	public $module_version = '1.2.4';
+	public $module_version = '1.2.7';
 	public $vn_module_dir = 'modules/registrars/virtualname/';
 	public $vn_whmcs_dir;
-	public $vn_whmcs_version = '7';
+	public $vn_whmcs_version = '8';
 
 	//CONSTRUCT
 	public function __construct(){
@@ -186,9 +186,9 @@ class Virtualname_admin{
 	}
 	//GET MODULE VERSION
 	public function get_module_version($params){
-	    $version_URL = 'http://whmcs.virtualname.net/whmcs-repositories/whmcs-7-virtualname-version-1';
+	    $version_URL = 'http://whmcs.virtualname.net/whmcs-repositories/whmcs-8-virtualname-version';
 	    $version_content = explode('-',file_get_contents($version_URL));
-	    $versions = array('whmcs'=>'7.X.X', 'lastversion'=> $version_content[2]);
+	    $versions = array('whmcs'=>'8.X.X', 'lastversion'=> $version_content[2]);
 	    $request = array('response'=>$versions);
 	    return $request;
 	}
