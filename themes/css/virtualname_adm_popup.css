@@ -1,0 +1,88 @@
+/* *************************************************************************
+// * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
+// * PLUGIN Api v1
+// * WHMCS version 8.2.X
+// * @copyright Copyright (c) 2021, Virtualname
+// * @version 1.3.1
+// * @link http://whmcs.virtualname.net
+// * @package WHMCSModule
+// * @subpackage TCpanel
+// * @common true
+// * File description: VIRTUALNAME CSS POPUP class
+// **************************************************************************/
+#vnotice .update_virtualname{
+  background: url(../images/vname_download.png) no-repeat #fcf8e3 15px 15px;
+  margin: 15px;
+  padding: 19px 15px 15px 70px;
+  height: 38px;
+  border: solid 1px #e9ebec;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  font-weight: bold;
+  color: #7AB353;;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 20px;
+  text-shadow: 0px 1px 0px #fff;
+}
+#vnotice .latestvname{
+    color: #333;
+    font-size: 50px;
+    font-weight: bold;
+    margin: 40px 0 0 0;
+    height: 78px;
+    font-family: Helvetica, Arial, sans-serif;
+    text-align: center;
+}
+#vnotice .currentvname{
+    margin: 0;
+    line-height: 40px;
+    color: #999;
+    font-family: Helvetica, Arial, sans-serif;
+    text-align: center;
+}
+#vnotice .btn-vname{
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #006dcc;
+  background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+  background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+  background-repeat: repeat-x;
+  border-color: #0044cc #0044cc #002a80;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc2', endColorstr='#ff0044cc', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  text-decoration: none;
+  display: inline-block;
+  padding: 5px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  vertical-align: middle;
+  cursor: pointer;
+  border-radius: 4px;
+}
+#vname_popup{
+  position: absolute;
+  z-index: 1001;
+  top: 50px;
+  left: auto;
+  display: block;
+  width: 410px;
+}
+#vname_popup .boxy{
+  padding:0;
+  width:400px;
+  height:300px;
+  overflow:hidden;
+}
+#vname_popup .content{
+  width:400px;
+  height:300px;
+  overflow:hidden;
+}

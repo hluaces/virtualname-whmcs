@@ -1,14 +1,15 @@
 <?php
 // *************************************************************************
-// * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE TOOLS
+// * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
 // * PLUGIN Api v1
-// * WHMCS version 8.1.X
+// * WHMCS version 8.2.X
 // * @copyright Copyright (c) 2021, Virtualname
-// * @version 1.1.9
-// * @link http://www.virtualname.es
+// * @version 1.3.1
+// * @link http://whmcs.virtualname.net
 // * @package WHMCSModule
 // * @subpackage TCpanel
-// * File description: Tools Extra Module
+// * @common true
+// * File description: General CALLBACK returns
 // *************************************************************************
 
 //INSTALL REQUIRES
@@ -16,9 +17,8 @@ require_once(realpath(dirname(__FILE__).'/../../../../..').'/configuration.php')
 require_once(realpath(dirname(__FILE__).'/../../../../..').'/init.php');
 require_once(realpath(dirname(__FILE__).'/../../../../..').'/includes/functions.php');
 
-
 //INIT WHMCS
-require_once(realpath(dirname(__FILE__).'/../../../../../modules/registrars/virtualname/').'/virtualname.php');
+require_once(realpath(dirname(__FILE__).'/../..').'/virtualname.php');
 global $vname_domains;
 virtualname_init();
 
@@ -28,9 +28,6 @@ if($_POST)
     $action = $_POST['action'];
 if($_SERVER['argv'][0])
     $action = $_SERVER['argv'][1];
-
-if(!$customadminpath || trim($customadminpath) == '')
-    $customadminpath = 'admin';
 
 if($action == 'initsync'){
     $limit  = $_POST['limit'];
@@ -87,26 +84,15 @@ elseif($action == 'syncContacts'){
     $contactsync = $vname_domains->tools_all_contactsync($nloop, $updateSync);
     print_r(json_encode($contactsync));
 }
-elseif($action == 'updateprices'){
-    require_once(realpath(dirname(__FILE__).'/../../../../../modules/addons/virtualname_tools/lib/classes/').'/class.prices_tools.php');
-    $idprice       = $_GET['idprice'];
-    $client_group  = $_GET['group'];
-    $response = tools_update_whmcs_prices($idprice, $client_group);
-    //RETURN ADMIN CALL
-    tools_return_page($customadminpath, $action, $response['error']);
+elseif($action == 'outboundTransfer'){
+    $vname_domains->tools_list(0, 0, 0, 'outbound_transfer');
+    $vname_domains->outbounds_mailing();
+    $domainsync = $vname_domains->tools_domainsync_status('', 'mod_virtualname_outbounds');
+    print_r(json_encode($domainsync));
 }
-elseif($action == 'init_transfer'){
-    require_once(realpath(dirname(__FILE__).'/../../../../../modules/addons/virtualname_tools/lib/classes/').'/class.domains_tools.php');
-    $response = tools_transfers_list();
-    print_r(json_encode($response));
-}
-elseif($action == 'launch_transfer'){
-    require_once(realpath(dirname(__FILE__).'/../../../../../modules/addons/virtualname_tools/lib/classes/').'/class.domains_tools.php');
-    $transfer_on_renewal = array();
-    $transfer_on_renewal['domainid'] = $_POST['domain'];
-    $transfer_on_renewal['type'] = $_POST['type'];
-    $transfer_on_renewal['value'] = $_POST['value'];
-    $response = tools_domain_transfer($transfer_on_renewal);
-    print_r(json_encode($response));
+elseif($action == 'pendingDomains'){
+    $vname_domains->tools_list(0, 0, 0, 'pending_domains');
+    $domainsync = $vname_domains->tools_domainsync_status('pending', 'mod_virtualname_pendings');
+    print_r(json_encode($domainsync));
 }
 ?>

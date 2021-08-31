@@ -1,17 +1,19 @@
 {
   "schema": "1.0",
   "type": "whmcs-registrars",
-  "name": "virtualname_tools",
+  "name": "virtualname",
   "license": "proprietary",
   "category": "domains",
   "description": {
-    "name": "Virtualname Tools",
-    "tagline": "Herramientas de gestión de dominios, contactos y tarifas.",
-    "long": "## Módulo de herramientas para la gestión de dominios y contactos con Tecnocrática Centro de Datos SL.",
+    "name": "Virtualname",
+    "tagline": "Registro y gestión de dominios.",
+    "long": "## Módulo para la gestión de dominios con Tecnocrática Centro de Datos SL.",
     "features": [
-      "Sincronización de dominios, contactos y precios",
-      "Herramientas de importación",
-      "Revisión de datos múltiples"
+      "Gestión avanzada de contactos",
+      "Gestión de DNS y registros",
+      "Ciclo de vida de dominios",
+      "Control de errores",
+      "Múltiples configuraciones"
     ]
   },
   "logo": {

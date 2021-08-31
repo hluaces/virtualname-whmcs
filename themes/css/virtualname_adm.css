@@ -1,0 +1,15 @@
+/* *************************************************************************
+// * VIRTUALNAME TCPANEL - WHMCS REGISTRAR MODULE
+// * PLUGIN Api v1
+// * WHMCS version 8.2.X
+// * @copyright Copyright (c) 2021, Virtualname
+// * @version 1.3.1
+// * @link http://whmcs.virtualname.net
+// * @package WHMCSModule
+// * @subpackage TCpanel
+// * @common true
+// * File description: VIRTUALNAME CSS ADMIN
+// **************************************************************************/
+.label_extra{
+	font-size:12px;
+}
